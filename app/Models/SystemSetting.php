@@ -14,5 +14,6 @@ class SystemSetting extends Model
         "idea_closure_date",
         "final_closure_date",
         "academic_year",
+        "status"
     ];
 }

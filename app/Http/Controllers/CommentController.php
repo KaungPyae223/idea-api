@@ -5,12 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
+use App\Repositories\CommentRepository;
 
 class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+     protected $commentRepository;
+
+    public function __construct(CommentRepository $commentRepository)
+    {
+        $this->commentRepository = $commentRepository;
+    }
+
     public function index()
     {
         //

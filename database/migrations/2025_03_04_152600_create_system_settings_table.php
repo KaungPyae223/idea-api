@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date("idea_closure_date");
             $table->date("final_closure_date");
             $table->date("academic_year");
+            $table->boolean("status");
             $table->timestamps();
         });
     }
@@ -28,4 +29,3 @@ return new class extends Migration
         Schema::dropIfExists('system_settings');
     }
 };
-           

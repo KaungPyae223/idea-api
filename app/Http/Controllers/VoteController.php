@@ -5,12 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreVoteRequest;
 use App\Http\Requests\UpdateVoteRequest;
 use App\Models\Vote;
+use App\Repositories\VoteRepository;
 
 class VoteController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+     protected $voteRepository;
+
+    public function __construct(VoteRepository $voteRepository)
+    {
+        $this->voteRepository = $voteRepository;
+    }
+
     public function index()
     {
         //

@@ -11,7 +11,7 @@ class UpdateDepartmentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+           'department_name' => ['required', 'string', 'unique:departments,department_name,' . $this->route("department")],
+            'QACoordinatorID' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 }

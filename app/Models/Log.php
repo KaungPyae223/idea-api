@@ -9,7 +9,8 @@ class Log extends Model
     protected $fillable = [
         'user_id',
         'action',
-        'description',
+        'type',
+        'activity',
         'created_at',
     ];
 }

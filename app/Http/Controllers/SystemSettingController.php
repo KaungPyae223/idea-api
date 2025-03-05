@@ -5,12 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSystemSettingRequest;
 use App\Http\Requests\UpdateSystemSettingRequest;
 use App\Models\SystemSetting;
+use App\Repositories\SystemSettingRepository;
 
 class SystemSettingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+     protected $systemSettingRepository;
+
+    public function __construct(SystemSettingRepository $categoryRepository)
+    {
+        $this->systemSettingRepository = $systemSettingRepository;
+    }
+
     public function index()
     {
         //
