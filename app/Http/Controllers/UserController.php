@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -53,7 +54,19 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:users,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid user ID'
+            ], 404);
+        }
+
+        $department = $this->userRepository->find($id);
+
+        return new UserResource($department);
     }
 
     /**
@@ -69,6 +82,16 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, string $id)
     {
+
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:users,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid user ID'
+            ], 404);
+        }
 
         $user = $this->userRepository->update($id, $request->all());
 

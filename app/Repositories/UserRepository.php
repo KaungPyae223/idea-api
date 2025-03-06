@@ -34,6 +34,7 @@ class UserRepository extends BasicFunctions
 
             $user = $this->model->create([
                 "name" => $data["name"],
+                "photo" => $data["photo"],
                 "email" => $data["email"],
                 "department_id" => $data["department_id"],
                 "password" => Hash::make("idea")
@@ -107,6 +108,7 @@ class UserRepository extends BasicFunctions
             $user->update([
                 "name" => $data["name"],
                 "email" => $data["email"],
+                "photo" => $data["photo"],
                 "department_id" => $data["department_id"],
             ]);
 

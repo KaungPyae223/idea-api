@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SystemSettingController;
 use App\Http\Controllers\UserController;
@@ -24,6 +25,6 @@ Route::prefix("v1")->group(function () {
         Route::apiResource('comments',CommentController::class);
         Route::apiResource('votes',VoteController::class);
         Route::apiResource('system-setting',SystemSettingController::class);
-
+        Route::apiResource('idea',IdeaController::class);
 
 });

@@ -23,6 +23,7 @@ class UpdateUserRequest extends FormRequest
     {
 
         return [
+            "photo" => ["string","required"],
             "role_id" => ["string","required"],
             "permissions_id" => ["string","required"],
             "name" => ["string","required"],
