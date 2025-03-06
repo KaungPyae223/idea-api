@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\IdeaController;
+use App\Http\Controllers\logController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SystemSettingController;
 use App\Http\Controllers\UserController;
@@ -27,4 +28,7 @@ Route::prefix("v1")->group(function () {
         Route::apiResource('system-setting',SystemSettingController::class);
         Route::apiResource('idea',IdeaController::class);
 
-});
+        Route::get('logs',[logController::class,'viewLog']);
+        Route::get('user-log/{id}',[logController::class,'userLog']);
+
+    });

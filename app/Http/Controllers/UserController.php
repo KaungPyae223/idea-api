@@ -45,6 +45,7 @@ class UserController extends Controller
     {
         $user = $this->userRepository->create($request->all());
 
+        return $user;
 
         return response()->json(['message' => 'User created successfully.', 'user' => new UserResource($user)], 201);
     }

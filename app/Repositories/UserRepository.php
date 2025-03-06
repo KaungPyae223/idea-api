@@ -34,11 +34,12 @@ class UserRepository extends BasicFunctions
 
             $user = $this->model->create([
                 "name" => $data["name"],
-                "photo" => $data["photo"],
+                "photo" => $data["photo"] ?? "default.jpg", // Ensure a value is provided
                 "email" => $data["email"],
                 "department_id" => $data["department_id"],
                 "password" => Hash::make("idea")
             ]);
+
 
             $user->roles()->attach($roleIDs);
             $user->permissions()->attach($permissionIDs);
@@ -86,7 +87,7 @@ class UserRepository extends BasicFunctions
             $this->addLog([
                 "user_id" => 1,
                 "type" => "user",
-                "action" => "create",
+                "action" => "update",
                 "activity" => "Update user " . $id . " / " . $this->compareDiff("name", $user->name, $data["name"]) . $this->compareDiff("email", $user->email, $data["email"]) . $this->compareDiff("department_id", $user->department_id, $data["department_id"]) . $this->compareDiff("role_ids", $originalRoles, $data["role_id"]) . $this->compareDiff("permissions_ids", $originalPermissions, $data["permissions_id"])
 
             ]);
