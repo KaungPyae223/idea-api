@@ -18,7 +18,7 @@ Route::prefix("v1")->group(function () {
 
 
         Route::apiResource('roles', RoleController::class);
-        Route::apiResource('users', UserController::class);
+        Route::apiResource('users', UserController::class)->except(["destroy"]);
         Route::apiResource('departments', DepartmentController::class);
         Route::apiResource('categories',CategoryController::class);
         Route::apiResource('comments',CommentController::class);

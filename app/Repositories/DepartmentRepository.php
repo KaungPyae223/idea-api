@@ -33,7 +33,7 @@ class DepartmentRepository extends BasicFunctions
                 "user_id" => 1,
                 "type" => "department",
                 "action" => "create",
-                "activity" => "create department",
+                "activity" => "create department ".$data["department_name"],
             ]);
 
             DB::commit();
