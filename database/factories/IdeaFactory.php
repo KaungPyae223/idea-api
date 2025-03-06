@@ -17,7 +17,11 @@ class IdeaFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "user_id" => 1,
+            "title" => fake()->name(),
+            "content" => fake()->name(),
+            "is_anonymous" => fake()->boolean(),
+            "is_enabled" => fake()->boolean(),
         ];
     }
 }

@@ -5,12 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreIdeaRequest;
 use App\Http\Requests\UpdateIdeaRequest;
 use App\Models\Idea;
+use App\Repositories\IdeaRepository;
 
 class IdeaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+     protected $ideaRepository;
+
+     public function __construct(IdeaRepository $ideaRepository)
+     {
+        $this->ideaRepository = $ideaRepository;
+     }
+
     public function index()
     {
         //

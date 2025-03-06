@@ -55,6 +55,17 @@ class DepartmentController extends Controller
      */
     public function show($id)
     {
+
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:departments,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid department ID'
+            ], 404);
+        }
+
         $department = $this->departmentRepository->find($id);
 
         return new DepartmentResource($department);
@@ -73,6 +84,17 @@ class DepartmentController extends Controller
      */
     public function update(UpdateDepartmentRequest $request, $id)
     {
+
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:departments,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid department ID'
+            ], 404);
+        }
+
         $department = $this->departmentRepository->update($id, $request->all());
 
         return response()->json(['message' => 'Department updated successfully.', 'department' => new DepartmentResource($department)]);

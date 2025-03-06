@@ -14,7 +14,12 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         DB::table('roles')->insert([
-            'role' => 'Super Admin',
+            ['role' => 'Administrator'],
+            ['role' => 'QA Manager'],
+            ['role' => 'QA Coordinators'],
+            ['role' => 'Staff'],
+            ['role' => 'Retired']
+
         ]);
     }
 }

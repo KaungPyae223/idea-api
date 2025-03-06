@@ -17,7 +17,10 @@ class SystemSettingFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'idea_closure_date' => fake()->date(),
+            'final_closure_date' => fake()->date(),
+            'academic_year' => fake()->date(),
+            'status' => fake()->boolean()
         ];
     }
 }

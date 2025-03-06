@@ -15,11 +15,17 @@ class PermissionSeeder extends Seeder
     {
         DB::table('permissions')->insert([
             ['permission' => 'Create User'],
-            ['permission' => 'View User'],
             ['permission' => 'Update User'],
-            ['permission' => 'Create Role'],
-            ['permission' => 'Update Role'],
-            ['permission' => 'Delete Role'],
+            ['permission' => 'View User Logs'],
+            ['permission' => 'Manage System Setting'],
+            ['permission' => 'Remove Idea'],
+            ['permission' => 'Remove Comments'],
+            ['permission' => 'Manage Category'],
+            ['permission' => 'Reports'],
+            ['permission' => 'Idea Submission'],
+            ['permission' => 'Create Idea'],
+            ['permission' => 'Create Comment'],
+
         ]);
     }
 
