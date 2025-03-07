@@ -17,4 +17,24 @@ class Idea extends Model
         'is_anonymous',
         'is_enabled',
     ];
+
+    public function categories () {
+        return $this->belongsToMany(Category::class,"category_ideas","idea_id","category_id","id","id");
+    }
+
+    public function files () {
+        return $this->hasMany(File::class,"idea_id","id");
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class,"user_id","id");
+    }
+
+    public function comment() {
+        return $this->hasMany(Comment::class,"idea_id","id");
+    }
+
+    public function votes() {
+        return $this->hasMany(Vote::class,"idea_id","id");
+    }
 }

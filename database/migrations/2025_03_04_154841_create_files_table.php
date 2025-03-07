@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('files', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("idea_id");
-            $table->unsignedBigInteger("file_name");
-            $table->unsignedBigInteger("file_path");
+            $table->longText("file_name");
+            $table->longText("file_path");
             $table->timestamps();
         });
     }

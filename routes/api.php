@@ -26,7 +26,10 @@ Route::prefix("v1")->group(function () {
         Route::apiResource('comments',CommentController::class);
         Route::apiResource('votes',VoteController::class);
         Route::apiResource('system-setting',SystemSettingController::class);
+
+        Route::put('update-idea-category/{id}',[IdeaController::class,"updateIdeaCategory"]);
         Route::apiResource('idea',IdeaController::class);
+        Route::put('submit-idea/{id}',[IdeaController::class,"submitIdea"]);
 
         Route::get('logs',[logController::class,'viewLog']);
         Route::get('user-log/{id}',[logController::class,'userLog']);
