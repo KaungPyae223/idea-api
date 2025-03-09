@@ -8,10 +8,13 @@ use App\Http\Requests\UpdateIdeaCategoryRequest;
 use App\Http\Requests\UpdateIdeaRequest;
 use App\Http\Resources\DepartmentResource;
 use App\Http\Resources\IdeaResource;
+use App\Mail\ApproveMail;
+use App\Mail\PostIdeaMail;
 use App\Models\Idea;
 use App\Repositories\IdeaRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class IdeaController extends Controller
@@ -76,12 +79,19 @@ class IdeaController extends Controller
         return IdeaResource::collection($ideas);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+
+
+    public function ideasToSubmit()
     {
-        //
+
+        $ideaToSubmit = Idea::query();
+
+        $ideaToSubmit->where('is_enabled',false);
+
+        $ideas = $ideaToSubmit->paginate(5);
+
+        return IdeaResource::collection($ideas);
+
     }
 
     /**
@@ -90,6 +100,8 @@ class IdeaController extends Controller
     public function store(StoreIdeaRequest $request)
     {
         $idea = $this->ideaRepository->create([...$request->all(),'is_enabled'=>false,'user_id' => 1]);
+
+        // Mail::to("kaungpyaeaung8123@gmail.com")->send(new PostIdeaMail($idea));
 
         return response()->json(['message' => 'Idea created successfully.', 'idea' => new IdeaResource($idea)], 201);
     }
@@ -177,6 +189,12 @@ class IdeaController extends Controller
         }
 
         $idea = $this->ideaRepository->submitIdea($id,$request->all());
+
+        // if($idea->is_enabled){
+
+        //     Mail::to("kaungpyaeaung8123@gmail.com")->send(new ApproveMail($idea));
+
+        // }
 
         return response()->json(['message' => "Idea's submitted successfully.", 'idea' => new IdeaResource($idea)]);
 
