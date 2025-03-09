@@ -23,17 +23,64 @@ class VoteRepository extends BasicFunctions
 
     public function create(array $data)
     {
+        try {
 
+            DB::beginTransaction();
+
+            $vote = $this->model->create($data);
+
+            DB::commit();
+
+            return $vote;
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return $e;
+        }
 
     }
 
     public function update($id, array $data)
     {
+        try {
+            DB::beginTransaction();
 
+            $vote = $this->find($id);
+
+            $vote->update(
+               $data
+            );
+
+
+            DB::commit();
+
+            return $vote;
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return $e;
+        }
     }
 
     public function destroy($id)
     {
+        try {
+            DB::beginTransaction();
 
+            $vote = $this->find($id);
+
+            $vote->delete();
+
+            DB::commit();
+
+            return $vote;
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return $e;
+        }
     }
 }

@@ -11,7 +11,7 @@ class UpdateSystemSettingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true ;
     }
 
     /**
@@ -21,8 +21,13 @@ class UpdateSystemSettingRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+
+            return [
+                'idea_closure_date' => ['required', 'date' ],
+                'final_closure_date' => ['required', 'date'],
+                'academic_year' => ['required', 'date'],
+                'status' => ['required', 'boolean'], // boolean allow 0-1 numbers.
+            ];
+
     }
 }

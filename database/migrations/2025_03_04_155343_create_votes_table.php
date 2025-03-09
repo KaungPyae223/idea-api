@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("user_id");
             $table->unsignedBigInteger("idea_id");
-            $table->tinyInteger("vote_value");
+            $table->tinyInteger("vote_value"); 
             $table->timestamps();
 
             $table->foreign('idea_id')->references('id')->on('ideas')->onDelete('cascade');

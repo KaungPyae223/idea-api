@@ -47,15 +47,21 @@ class CategoryRepository extends BasicFunctions
     public function update($id, array $data)
     {
         try {
-            $category = $this->model->find($id);
-            if ($category) {
-                $category->update($data);
-                return $category;
-            }
-            return null;
-        } catch (\Exception $e) {
-            Log::error('Error updating category: ' . $e->getMessage());
-            return null;
+            DB::beginTransaction();
+            $category = $this->find($id);   
+            $this->addLog([
+                "user_id" => 1,
+                "type" => "category",
+                "action" => "update",
+                "activity" => "update category id : " . $id . " / " . $this->compareDiff("name", $category->name, $data["name"]),
+            ]);
+
+            $category->update($data);
+            DB::commit();
+            return $category;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $e;
         }
     }
 

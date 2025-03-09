@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\VoteResource;
 use App\Http\Requests\StoreVoteRequest;
 use App\Http\Requests\UpdateVoteRequest;
 use App\Models\Vote;
 use App\Repositories\VoteRepository;
+use Illuminate\Support\Facades\Validator;
 
 class VoteController extends Controller
 {
@@ -13,7 +15,7 @@ class VoteController extends Controller
      * Display a listing of the resource.
      */
 
-     protected $voteRepository;
+    protected $voteRepository;
 
     public function __construct(VoteRepository $voteRepository)
     {
@@ -22,7 +24,8 @@ class VoteController extends Controller
 
     public function index()
     {
-        //
+        $votes = Vote::all();
+        return VoteResource::collection($votes);
     }
 
     /**
@@ -38,15 +41,27 @@ class VoteController extends Controller
      */
     public function store(StoreVoteRequest $request)
     {
-        //
+        $vote = $this->voteRepository->create($request->all());
+        return response()->json(['message' => 'Vote created successfully.', 'vote' => new VoteResource($vote)], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Vote $vote)
+    public function show($id)
     {
-        //
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:votes,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid vote ID'
+            ], 404);
+        }
+
+        $vote = $this->voteRepository->find($id);
+        return new VoteResource($vote);
     }
 
     /**
@@ -60,16 +75,38 @@ class VoteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateVoteRequest $request, Vote $vote)
+    public function update(UpdateVoteRequest $request, $id)
     {
-        //
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:votes,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid vote ID'
+            ], 404);
+        }
+
+        $vote = $this->voteRepository->update($id, $request->all());
+        return response()->json(['message' => 'Vote updated successfully.', 'vote' => $vote]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Vote $vote)
+    public function destroy($id)
     {
-        //
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:votes,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid vote ID'
+            ], 404);
+        }
+
+        $vote = $this->voteRepository->destroy($id);
+        return response()->json(['message' => 'Vote deleted successfully.']);
     }
 }

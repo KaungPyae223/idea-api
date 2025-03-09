@@ -88,7 +88,7 @@ class CategoryController extends Controller
         }
 
         $category = $this->categoryRepository->update($id, $request->all());
-        return response()->json(['message' => 'Category updated successfully.', 'category' => new CategoryResource($category)]);
+        return response()->json(['message' => 'Category updated successfully.', 'category' => $category]);
     }
 
     /**

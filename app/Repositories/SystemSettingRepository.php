@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\SystemSetting;
 use App\Repositories\BasicFunctions\BasicFunctions;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SystemSettingRepository extends BasicFunctions
 {
@@ -22,17 +23,76 @@ class SystemSettingRepository extends BasicFunctions
 
     public function create(array $data)
     {
+        try {
 
+            DB::beginTransaction();
 
+            $systemSetting = $this->model->create($data);
+
+            $this->addLog([
+                "user_id" => 1,
+                "type" => "system-setting",
+                "action" => "create",
+                "activity" => "create system setting " . $data["academic_year"],
+            ]);
+
+            DB::commit();
+
+            return $systemSetting;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Error creating system setting: ' . $e->getMessage());
+            return null;
+        }
     }
 
     public function update($id, array $data)
     {
+        try {
+            DB::beginTransaction();
 
+            $systemSetting = $this->find($id);
+
+            if (!$systemSetting ) {
+                throw new \Exception('System setting not found.');
+            }
+
+            $this->addLog([
+                "user_id" => 1,
+                "type" => "system_setting",
+                "action" => "update",
+                "activity" => "update system setting id : " . $id . " / " . $this->compareDiff("idea_closure_date", $systemSetting->idea_closure_date, $data["idea_closure_date"]) . $this->compareDiff("final_closure_date", $systemSetting->final_closure_date, $data["final_closure_date"]) . $this->compareDiff("academic_year", $systemSetting->academic_year, $data["academic_year"]) . $this->compareDiff("status", $systemSetting->status, $data["status"])
+            ]);
+
+            $systemSetting->update($data);
+
+            DB::commit();
+
+            return $systemSetting ;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Error updating system setting: ' . $e->getMessage());
+            return null;
+        }
     }
 
     public function destroy($id)
     {
-
+        try {
+            $systemSetting = $this->model->find($id);
+            if ($systemSetting ) {
+                $systemSetting->delete();
+                $this->addLog([
+                    "user_id" => 1,
+                    "type" => "system_setting",
+                    "action" => "delete",
+                    "activity" => "delete system setting id : " . $systemSetting->id,
+                ]);
+            }
+            return $systemSetting ;
+        } catch (\Throwable $e) {
+            Log::error('Error deleting system setting: ' . $e->getMessage());
+            return null;
+        }
     }
 }
