@@ -34,7 +34,7 @@ class UserRepository extends BasicFunctions
 
             $user = $this->model->create([
                 "name" => $data["name"],
-                "photo" => $data["photo"] ?? "default.jpg", // Ensure a value is provided
+                "photo" => $data["photo"], 
                 "email" => $data["email"],
                 "department_id" => $data["department_id"],
                 "password" => Hash::make("idea")
