@@ -51,7 +51,7 @@
 
     <div class="container">
         <div class="logo">
-            <img src="{{ asset('/storage/idea.svg') }}" alt="Application Logo">
+            <img src="{{ asset('/idea.svg') }}" alt="Application Logo">
         </div>
 
         <div class="content">
