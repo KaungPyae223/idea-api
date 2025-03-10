@@ -43,13 +43,16 @@ class SystemSettingController extends Controller
     public function store(StoreSystemSettingRequest $request)
     {
         $systemSetting = $this->systemSettingRepository->create($request->all());
+
+        return $systemSetting;
+
         return response()->json(['message' => 'System setting created successfully.', 'system_setting' => new SystemSettingResouce($systemSetting)], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(SystemSetting $systemSetting)
+    public function show($id)
     {
         $validated = Validator::make(['id' => $id], [
             'id' => 'required|integer|exists:system_settings,id',

@@ -41,7 +41,7 @@ class VoteController extends Controller
      */
     public function store(StoreVoteRequest $request)
     {
-        $vote = $this->voteRepository->create($request->all());
+        $vote = $this->voteRepository->create([...$request->all(),"user_id" => 1]);
         return response()->json(['message' => 'Vote created successfully.', 'vote' => new VoteResource($vote)], 201);
     }
 
@@ -87,7 +87,7 @@ class VoteController extends Controller
             ], 404);
         }
 
-        $vote = $this->voteRepository->update($id, $request->all());
+        $vote = $this->voteRepository->update($id, [...$request->all(),"user_id" => 1]);
         return response()->json(['message' => 'Vote updated successfully.', 'vote' => $vote]);
     }
 

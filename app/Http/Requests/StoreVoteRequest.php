@@ -22,7 +22,6 @@ class StoreVoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'integer', 'exists:users,id'],
             'idea_id' => ['required', 'integer', 'exists:ideas,id'],
             'vote_value' => ['required', 'boolean'],
         ];

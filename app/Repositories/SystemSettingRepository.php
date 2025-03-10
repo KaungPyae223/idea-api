@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\SystemSetting;
 use App\Repositories\BasicFunctions\BasicFunctions;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class SystemSettingRepository extends BasicFunctions
 {
@@ -23,6 +22,8 @@ class SystemSettingRepository extends BasicFunctions
 
     public function create(array $data)
     {
+
+
         try {
 
             DB::beginTransaction();
@@ -41,8 +42,8 @@ class SystemSettingRepository extends BasicFunctions
             return $systemSetting;
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Error creating system setting: ' . $e->getMessage());
-            return null;
+
+            return $e;
         }
     }
 
@@ -71,8 +72,8 @@ class SystemSettingRepository extends BasicFunctions
             return $systemSetting ;
         } catch (\Throwable $e) {
             DB::rollBack();
-            Log::error('Error updating system setting: ' . $e->getMessage());
-            return null;
+
+            return $e;
         }
     }
 
@@ -91,8 +92,8 @@ class SystemSettingRepository extends BasicFunctions
             }
             return $systemSetting ;
         } catch (\Throwable $e) {
-            Log::error('Error deleting system setting: ' . $e->getMessage());
-            return null;
+
+            return $e;
         }
     }
 }

@@ -41,14 +41,14 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
-        $comment = $this->commentRepository->create($request->all());
+        $comment = $this->commentRepository->create([...$request->all(),"user_id" => 1]);
         return response()->json(['message' => 'Comment created successfully.', 'comment' => new CommentResource($comment)], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Comment $comment)
+    public function show($id)
     {
         $validated = Validator::make(['id' => $id], [
             'id' => 'required|integer|exists:comments,id',
@@ -87,7 +87,7 @@ class CommentController extends Controller
             ], 404);
         }
 
-        $comment = $this->commentRepository->update($id, $request->all());
+        $comment = $this->commentRepository->update($id, [...$request->all(),"user_id" => 1]);
         return response()->json(['message' => 'Comment updated successfully.', 'comments' => $comment]);
     }
 
