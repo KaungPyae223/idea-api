@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentResource;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
 use App\Repositories\CommentRepository;
+use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
 {
@@ -22,7 +24,8 @@ class CommentController extends Controller
 
     public function index()
     {
-        //
+        $comments = Comment::all();
+        return CommentResource::collection($comments);
     }
 
     /**
@@ -38,15 +41,27 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
-        //
+        $comment = $this->commentRepository->create([...$request->all(),"user_id" => 1]);
+        return response()->json(['message' => 'Comment created successfully.', 'comment' => new CommentResource($comment)], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Comment $comment)
+    public function show($id)
     {
-        //
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:comments,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid comment ID'
+            ], 404);
+        }
+
+        $comment = $this->commentRepository->find($id);
+        return new CommentResource($comment);
     }
 
     /**
@@ -60,16 +75,38 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCommentRequest $request, Comment $comment)
+    public function update(UpdateCommentRequest $request, $id)
     {
-        //
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:comments,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid comment ID'
+            ], 404);
+        }
+
+        $comment = $this->commentRepository->update($id, [...$request->all(),"user_id" => 1]);
+        return response()->json(['message' => 'Comment updated successfully.', 'comments' => $comment]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy($id)
     {
-        //
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:comments,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid comment ID'
+            ], 404);
+        }
+
+        $comment = $this->commentRepository->destroy($id);
+        return response()->json(['message' => 'Comment deleted successfully.']);
     }
 }

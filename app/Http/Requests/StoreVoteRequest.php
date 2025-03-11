@@ -11,7 +11,7 @@ class StoreVoteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,6 +22,9 @@ class StoreVoteRequest extends FormRequest
     public function rules(): array
     {
         return [
+
+            'idea_id' => ['required', 'integer', 'exists:ideas,id'],
+            'vote_value' => ['required', 'boolean'],
             
         ];
     }

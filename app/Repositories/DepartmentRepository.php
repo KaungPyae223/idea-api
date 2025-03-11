@@ -82,7 +82,7 @@ class DepartmentRepository extends BasicFunctions
     {
         try {
             DB::beginTransaction();
-
+            
             $department = $this->find($id);
 
             $this->addLog([
