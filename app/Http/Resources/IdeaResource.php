@@ -14,6 +14,23 @@ class IdeaResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+
+        $department_name =  $this->user->department? $this->user->department->department_name:null;
+
+
+        return [
+            "id" => $this->id,
+            "user_name" => $this->is_anonymous? "Anonymous" : $this->user->name,
+            "user_email" => $this->is_anonymous? "" : $this->user->email,
+            "user_photo" => $this->is_anonymous? "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Breezeicons-actions-22-im-user.svg/1200px-Breezeicons-actions-22-im-user.svg.png" : $this->user->photo,
+            "department" => $this->is_anonymous? "" : $department_name ,
+            "title" => $this->title,
+            "content" => $this->content,
+            "category" => $this->categories->pluck("name")->toArray(),
+            "files" => $this->files,
+            "comments" => $this->comment->count(),
+            "total_vote_value" => $this->votes->count()?$this->votes->sum("vote_value"):0,
+            "time" => $this->created_at,
+        ];
     }
 }
