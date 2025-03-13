@@ -32,11 +32,12 @@ class IdeaController extends Controller
         $this->ideaRepository = $ideaRepository;
     }
 
-    protected function checkCategory($categories){
+    protected function checkCategory($categories)
+    {
 
         $categoryArr = explode(',', $categories);
 
-        foreach($categoryArr as $id){
+        foreach ($categoryArr as $id) {
             $validated = Validator::make(['id' => $id], [
                 'id' => 'required|integer|exists:categories,id',
             ]);
@@ -49,10 +50,10 @@ class IdeaController extends Controller
         }
 
         return null;
-
     }
 
-    protected function checkID($id){
+    protected function checkID($id)
+    {
         $validated = Validator::make(['id' => $id], [
             'id' => 'required|integer|exists:ideas,id',
         ]);
@@ -153,7 +154,7 @@ class IdeaController extends Controller
 
         $checkCategory = $this->checkCategory($request->category);
 
-        if($checkCategory){
+        if ($checkCategory) {
             return $checkCategory;
         }
 
@@ -172,7 +173,7 @@ class IdeaController extends Controller
 
         $checkID = $this->checkID($id);
 
-        if($checkID){
+        if ($checkID) {
             return $checkID;
         }
 
@@ -198,7 +199,7 @@ class IdeaController extends Controller
 
         $checkID = $this->checkID($id);
 
-        if($checkID){
+        if ($checkID) {
             return $checkID;
         }
 
@@ -206,20 +207,15 @@ class IdeaController extends Controller
 
         $checkIdeaFinalClosureDate = $this->ideaRepository->find($id);
 
-        $currentDate = now();
-
-        $finalClosureDate = Carbon::parse($checkIdeaFinalClosureDate->systemSetting->final_closure_date);
-
-
-        if ($finalClosureDate->lessThan($currentDate)) {
+        if ($checkIdeaFinalClosureDate->status) {
             return response()->json([
-                'message' => 'You cannot update idea after the idea closure date'
+                'message' => 'Cannot update idea after the idea closure date'
             ], 409);
         }
 
         $checkCategory = $this->checkCategory($request->category);
 
-        if($checkCategory){
+        if ($checkCategory) {
             return $checkCategory;
         }
 
@@ -234,7 +230,7 @@ class IdeaController extends Controller
         // check the valid id or not
         $checkID = $this->checkID($id);
 
-        if($checkID){
+        if ($checkID) {
             return $checkID;
         }
 
@@ -242,19 +238,16 @@ class IdeaController extends Controller
         //check after closure date or not
         $checkIdeaFinalClosureDate = $this->ideaRepository->find($id);
 
-        $currentDate = now();
 
-        $finalClosureDate = Carbon::parse($checkIdeaFinalClosureDate->systemSetting->final_closure_date);
-
-        if ($finalClosureDate->lessThan($currentDate)) {
+        if ($checkIdeaFinalClosureDate->status) {
             return response()->json([
-                'message' => 'You cannot update idea after the idea closure date'
+                'message' => 'Cannot update idea after the idea closure date'
             ], 409);
         }
 
         $checkCategory = $this->checkCategory($request->category);
 
-        if($checkCategory){
+        if ($checkCategory) {
             return $checkCategory;
         }
 
@@ -268,7 +261,7 @@ class IdeaController extends Controller
 
         $checkID = $this->checkID($id);
 
-        if($checkID){
+        if ($checkID) {
             return $checkID;
         }
 
@@ -291,7 +284,7 @@ class IdeaController extends Controller
     {
         $checkID = $this->checkID($id);
 
-        if($checkID){
+        if ($checkID) {
             return $checkID;
         }
 

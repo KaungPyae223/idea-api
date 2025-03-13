@@ -21,4 +21,8 @@ class Comment extends Model
         return $this->belongsTo(User::class,"user_id","id");
     }
 
+    public function idea(){
+        return $this->belongsTo(Idea::class,"idea_id","id");
+    }
+
 }

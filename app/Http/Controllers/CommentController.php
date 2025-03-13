@@ -7,6 +7,8 @@ use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
 use App\Repositories\CommentRepository;
+use App\Repositories\IdeaRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
@@ -16,10 +18,13 @@ class CommentController extends Controller
      */
 
      protected $commentRepository;
+     protected $ideaRepository;
 
-    public function __construct(CommentRepository $commentRepository)
+
+    public function __construct(CommentRepository $commentRepository,IdeaRepository $ideaRepository)
     {
         $this->commentRepository = $commentRepository;
+        $this->ideaRepository = $ideaRepository;
     }
 
     protected function checkID($id){
@@ -55,6 +60,15 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
+
+        $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
+
+        if ($checkIdeaFinalClosureDate->status) {
+            return response()->json([
+                'message' => 'Cannot comment idea after the idea closure date'
+            ], 409);
+        }
+
         $comment = $this->commentRepository->create([...$request->all(),"user_id" => 1]);
         return response()->json(['message' => 'Comment created successfully.', 'comment' => new CommentResource($comment)], 201);
     }
@@ -84,6 +98,14 @@ class CommentController extends Controller
 
         if($checkID){
             return $checkID;
+        }
+
+        $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
+
+        if ($checkIdeaFinalClosureDate->status) {
+            return response()->json([
+                'message' => 'Cannot comment idea after the idea closure date'
+            ], 409);
         }
 
         $comment = $this->commentRepository->update($id, [...$request->all(),"user_id" => 1]);
