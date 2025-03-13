@@ -62,7 +62,7 @@ class SystemSettingRepository extends BasicFunctions
                 "user_id" => 1,
                 "type" => "system_setting",
                 "action" => "update",
-                "activity" => "update system setting id : " . $id . " / " . $this->compareDiff("idea_closure_date", $systemSetting->idea_closure_date, $data["idea_closure_date"]) . $this->compareDiff("final_closure_date", $systemSetting->final_closure_date, $data["final_closure_date"]) . $this->compareDiff("academic_year", $systemSetting->academic_year, $data["academic_year"]) . $this->compareDiff("status", $systemSetting->status, $data["status"])
+                "activity" => "update system setting id : " . $id . " / " . $this->compareDiff("idea_closure_date", $systemSetting->idea_closure_date, $data["idea_closure_date"]) . $this->compareDiff("final_closure_date", $systemSetting->final_closure_date, $data["final_closure_date"]) . $this->compareDiff("academic_year", $systemSetting->academic_year, $data["academic_year"]),
             ]);
 
             $systemSetting->update($data);

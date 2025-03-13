@@ -17,6 +17,9 @@ class IdeaResource extends JsonResource
 
         $department_name =  $this->user->department? $this->user->department->department_name:null;
 
+        $user_vote = $this->votes()->where("user_id", 1)->first();
+
+        $user_vote_value = $user_vote ? $user_vote->vote_value : 0;
 
         return [
             "id" => $this->id,
@@ -30,6 +33,7 @@ class IdeaResource extends JsonResource
             "files" => $this->files,
             "comments" => $this->comment->count(),
             "total_vote_value" => $this->votes->count()?$this->votes->sum("vote_value"):0,
+            "user_vote_value" => $user_vote_value,
             "time" => $this->created_at,
         ];
     }

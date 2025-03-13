@@ -16,4 +16,13 @@ class Comment extends Model
         'comment',
         'is_anonymous',
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class,"user_id","id");
+    }
+
+    public function idea(){
+        return $this->belongsTo(Idea::class,"idea_id","id");
+    }
+
 }

@@ -24,8 +24,7 @@ class VoteController extends Controller
 
     public function index()
     {
-        $votes = Vote::all();
-        return VoteResource::collection($votes);
+
     }
 
     /**
@@ -41,8 +40,17 @@ class VoteController extends Controller
      */
     public function store(StoreVoteRequest $request)
     {
-        $vote = $this->voteRepository->create([...$request->all(),"user_id" => 1]);
-        return response()->json(['message' => 'Vote created successfully.', 'vote' => new VoteResource($vote)], 201);
+
+        $already_vote  = Vote::query()->where("idea_id",$request->idea_id)->where("user_id",1)->first();
+
+
+        if($already_vote){
+            $vote = $this->voteRepository->update($already_vote->id, [...$request->all(),"user_id" => 1]);
+        }else{
+            $vote = $this->voteRepository->create([...$request->all(),"user_id" => 1]);
+        }
+
+        return response()->json(['message' => 'Successfully Voted', 'vote' => new VoteResource($vote)], 201);
     }
 
     /**
@@ -50,18 +58,7 @@ class VoteController extends Controller
      */
     public function show($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:votes,id',
-        ]);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid vote ID'
-            ], 404);
-        }
-
-        $vote = $this->voteRepository->find($id);
-        return new VoteResource($vote);
     }
 
     /**
@@ -77,18 +74,7 @@ class VoteController extends Controller
      */
     public function update(UpdateVoteRequest $request, $id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:votes,id',
-        ]);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid vote ID'
-            ], 404);
-        }
-
-        $vote = $this->voteRepository->update($id, [...$request->all(),"user_id" => 1]);
-        return response()->json(['message' => 'Vote updated successfully.', 'vote' => $vote]);
     }
 
     /**
@@ -102,7 +88,7 @@ class VoteController extends Controller
 
         if ($validated->fails()) {
             return response()->json([
-                'message' => 'Invalid vote ID'
+                'message' => 'Invalid Vote ID'
             ], 404);
         }
 

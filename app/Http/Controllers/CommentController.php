@@ -7,6 +7,8 @@ use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
 use App\Repositories\CommentRepository;
+use App\Repositories\IdeaRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
@@ -16,10 +18,27 @@ class CommentController extends Controller
      */
 
      protected $commentRepository;
+     protected $ideaRepository;
 
-    public function __construct(CommentRepository $commentRepository)
+
+    public function __construct(CommentRepository $commentRepository,IdeaRepository $ideaRepository)
     {
         $this->commentRepository = $commentRepository;
+        $this->ideaRepository = $ideaRepository;
+    }
+
+    protected function checkID($id){
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:comments,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid Comment ID'
+            ], 404);
+        }
+
+        return null;
     }
 
     public function index()
@@ -41,6 +60,15 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
+
+        $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
+
+        if ($checkIdeaFinalClosureDate->status) {
+            return response()->json([
+                'message' => 'Cannot comment idea after the idea closure date'
+            ], 409);
+        }
+
         $comment = $this->commentRepository->create([...$request->all(),"user_id" => 1]);
         return response()->json(['message' => 'Comment created successfully.', 'comment' => new CommentResource($comment)], 201);
     }
@@ -50,18 +78,7 @@ class CommentController extends Controller
      */
     public function show($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:comments,id',
-        ]);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid comment ID'
-            ], 404);
-        }
-
-        $comment = $this->commentRepository->find($id);
-        return new CommentResource($comment);
     }
 
     /**
@@ -77,14 +94,18 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request, $id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:comments,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
+        if($checkID){
+            return $checkID;
+        }
+
+        $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
+
+        if ($checkIdeaFinalClosureDate->status) {
             return response()->json([
-                'message' => 'Invalid comment ID'
-            ], 404);
+                'message' => 'Cannot comment idea after the idea closure date'
+            ], 409);
         }
 
         $comment = $this->commentRepository->update($id, [...$request->all(),"user_id" => 1]);
@@ -96,14 +117,10 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:comments,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid comment ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
         $comment = $this->commentRepository->destroy($id);

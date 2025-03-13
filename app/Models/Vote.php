@@ -15,4 +15,5 @@ class Vote extends Model
         'idea_id',
         "vote_value"
     ];
+
 }

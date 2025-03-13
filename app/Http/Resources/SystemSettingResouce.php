@@ -14,6 +14,14 @@ class SystemSettingResouce extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this->id,
+            "idea_closure_date" => $this->idea_closure_date,
+            "final_closure_date" => $this->final_closure_date,
+            "academic_year" => $this->academic_year,
+            "status" => $this->status,
+            "total_ideas" => $this->ideas->count()
+
+        ];
     }
 }

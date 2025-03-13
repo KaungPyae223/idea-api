@@ -24,9 +24,9 @@ class UpdateSystemSettingRequest extends FormRequest
 
             return [
                 'idea_closure_date' => ['required', 'date' ],
-                'final_closure_date' => ['required', 'date'],
-                'academic_year' => ['required', 'date'],
-                'status' => ['required', 'boolean'], // boolean allow 0-1 numbers.
+                'final_closure_date' => ['required', 'date','after:idea_closure_date'],
+                'academic_year' => ['required', 'string','unique:system_settings,academic_year,'.$this->route('system_setting')],
+
             ];
 
     }
