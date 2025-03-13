@@ -33,6 +33,8 @@ Route::prefix("v1")->group(function () {
         Route::apiResource('categories',CategoryController::class);
         Route::apiResource('comments',CommentController::class)->except(["show"]);
         Route::apiResource('votes',VoteController::class)->only(["create","destroy"]);
+
+        Route::get('system-setting/getCSV/{id}',[SystemSettingController::class,"exportCSV"]);
         Route::apiResource('system-setting',SystemSettingController::class);
 
         Route::put('update-idea-category/{id}',[IdeaController::class,"updateIdeaCategory"]);

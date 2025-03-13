@@ -205,11 +205,13 @@ class IdeaController extends Controller
 
         // check idea is over is over final closure date or not.
 
-        $checkIdeaFinalClosureDate = $this->ideaRepository->find($id);
+        $checkIdeaClosureDate = $this->ideaRepository->find($id);
+        $ideaClosureDate = Carbon::parse($checkIdeaClosureDate);
+        $currentDate = now();
 
-        if ($checkIdeaFinalClosureDate->status) {
+        if ($ideaClosureDate->lessThan($currentDate)) {
             return response()->json([
-                'message' => 'Cannot update idea after the idea closure date'
+                'message' => 'You cannot create idea after the idea closure date'
             ], 409);
         }
 
