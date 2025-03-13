@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDepartmentRequest;
 use App\Http\Requests\UpdateDepartmentRequest;
 use App\Http\Resources\DepartmentResource;
+use App\Http\Resources\UserResource;
 use App\Models\Department;
 use App\Repositories\DepartmentRepository;
 use Illuminate\Support\Facades\Validator;
@@ -20,6 +21,20 @@ class DepartmentController extends Controller
     public function __construct(DepartmentRepository $departmentRepository)
     {
         $this->departmentRepository = $departmentRepository;
+    }
+
+    protected function checkID($id){
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:departments,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid Department ID'
+            ], 404);
+        }
+
+        return null;
     }
 
     public function index()
@@ -56,19 +71,31 @@ class DepartmentController extends Controller
     public function show($id)
     {
 
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:departments,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid department ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
         $department = $this->departmentRepository->find($id);
 
         return new DepartmentResource($department);
+    }
+
+    public function departmentUsers($id){
+
+        $checkID = $this->checkID($id);
+
+        if($checkID){
+            return $checkID;
+        }
+
+        $department = $this->departmentRepository->find($id);
+
+        $users = $department->user;
+
+        return UserResource::collection($users);
+
     }
 
     /**
@@ -85,14 +112,10 @@ class DepartmentController extends Controller
     public function update(UpdateDepartmentRequest $request, $id)
     {
 
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:departments,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid department ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
         $department = $this->departmentRepository->update($id, $request->all());
@@ -105,14 +128,19 @@ class DepartmentController extends Controller
      */
     public function destroy($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:departments,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid department ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
+        }
+
+        $checkCanDelete = $this->departmentRepository->find($id);
+
+        $noOfIdeaUsed = $checkCanDelete->user->count();
+
+
+        if($noOfIdeaUsed){
+           return response()->json(['message' => 'Department is used in user. Cannot delete department']);
         }
 
         $department = $this->departmentRepository->destroy($id);

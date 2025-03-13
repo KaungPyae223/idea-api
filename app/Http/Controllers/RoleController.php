@@ -17,7 +17,12 @@ class RoleController extends Controller
             return [
                 'id' => $role->id,
                 'role' => $role->role,
-                'permissions' => $role->permissions()->pluck('permission')->toArray()
+                'permissions' => $role->permissions->map(function($permission){
+                    return [
+                        "id" => $permission->id,
+                        "permission" => $permission->permission
+                    ];
+                })
             ];
         });
 

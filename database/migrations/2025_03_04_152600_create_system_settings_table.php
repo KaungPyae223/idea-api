@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date("idea_closure_date");
             $table->date("final_closure_date");
-            $table->date("academic_year");
+            $table->string("academic_year");
             $table->boolean("status");
             $table->timestamps();
         });

@@ -24,8 +24,8 @@ class StoreVoteRequest extends FormRequest
         return [
 
             'idea_id' => ['required', 'integer', 'exists:ideas,id'],
-            'vote_value' => ['required', 'boolean'],
-            
+            'vote_value' => ['required', 'in:1,-1'],
+
         ];
     }
 }

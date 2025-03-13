@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -16,12 +17,65 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
 
-     protected $userRepository;
+    protected $userRepository;
 
-     public function __construct(UserRepository $userRepository)
-     {
+    public function __construct(UserRepository $userRepository)
+    {
         $this->userRepository = $userRepository;
-     }
+    }
+
+    protected function checkID($id)
+    {
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:users,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid User ID'
+            ], 404);
+        }
+
+        return null;
+    }
+    protected function checkPermissions($permissions){
+
+        $permissionArr = explode(',', $permissions);
+
+        foreach($permissionArr as $id){
+            $validated = Validator::make(['id' => $id], [
+                'id' => 'required|integer|exists:permissions,id',
+            ]);
+
+            if ($validated->fails()) {
+                return response()->json([
+                    'message' => "Permission ID $id is Invalid Permission ID"
+                ], 404);
+            }
+        }
+
+        return null;
+
+    }
+    protected function checkRole($role){
+
+        $rolesArr = explode(',', $role);
+
+        foreach($rolesArr as $id){
+            $validated = Validator::make(['id' => $id], [
+                'id' => 'required|integer|exists:roles,id',
+            ]);
+
+            if ($validated->fails()) {
+                return response()->json([
+                    'message' => "Role ID $id is Invalid Role ID"
+                ], 404);
+            }
+        }
+
+        return null;
+
+    }
 
     public function index()
     {
@@ -43,6 +97,20 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+
+
+        $checkRole = $this->checkRole($request->role_id);
+
+        if($checkRole){
+            return $checkRole;
+        }
+
+        $checkPermission = $this->checkPermissions($request->permissions_id);
+
+        if($checkPermission){
+            return $checkPermission;
+        }
+
         $user = $this->userRepository->create($request->all());
 
         return $user;
@@ -55,19 +123,37 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:users,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid user ID'
-            ], 404);
+        if ($checkID) {
+            return $checkID;
         }
 
         $department = $this->userRepository->find($id);
 
         return new UserResource($department);
+    }
+
+    public function restartPassword($id)
+    {
+
+        $checkID = $this->checkID($id);
+
+        if ($checkID) {
+            return $checkID;
+        }
+
+        $user = $this->userRepository->find($id);
+
+        $user->update([
+            "password" => Hash::make("idea")
+        ]);
+
+        $user->tokens()->delete();
+
+        return response()->json([
+            "message" => "Successfully Reset the Password"
+        ]);
     }
 
     /**
@@ -84,18 +170,27 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, string $id)
     {
 
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:users,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid user ID'
-            ], 404);
+        if ($checkID) {
+            return $checkID;
+        }
+
+        $checkRole = $this->checkRole($request->role_id);
+
+        if($checkRole){
+            return $checkRole;
+        }
+
+        $checkPermission = $this->checkPermissions($request->permissions_id);
+
+        if($checkPermission){
+            return $checkPermission;
         }
 
         $user = $this->userRepository->update($id, $request->all());
 
+        $user->tokens()->delete();
 
         return response()->json(['message' => 'User updated successfully.', 'user' => new UserResource($user)]);
     }

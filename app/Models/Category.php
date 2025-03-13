@@ -14,4 +14,8 @@ class Category extends Model
         'name',
     ];
 
+    public function ideas(){
+        return $this->belongsToMany(Idea::class,"category_ideas","category_id","idea_id","id","id");
+    }
+
 }

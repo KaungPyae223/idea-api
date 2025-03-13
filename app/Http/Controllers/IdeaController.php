@@ -11,7 +11,9 @@ use App\Http\Resources\IdeaResource;
 use App\Mail\ApproveMail;
 use App\Mail\PostIdeaMail;
 use App\Models\Idea;
+use App\Models\SystemSetting;
 use App\Repositories\IdeaRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -23,12 +25,46 @@ class IdeaController extends Controller
      * Display a listing of the resource.
      */
 
-     protected $ideaRepository;
+    protected $ideaRepository;
 
-     public function __construct(IdeaRepository $ideaRepository)
-     {
+    public function __construct(IdeaRepository $ideaRepository)
+    {
         $this->ideaRepository = $ideaRepository;
-     }
+    }
+
+    protected function checkCategory($categories){
+
+        $categoryArr = explode(',', $categories);
+
+        foreach($categoryArr as $id){
+            $validated = Validator::make(['id' => $id], [
+                'id' => 'required|integer|exists:categories,id',
+            ]);
+
+            if ($validated->fails()) {
+                return response()->json([
+                    'message' => "Category ID $id is Invalid Category ID"
+                ], 404);
+            }
+        }
+
+        return null;
+
+    }
+
+    protected function checkID($id){
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:ideas,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid idea ID'
+            ], 404);
+        }
+
+        return null;
+    }
 
     public function index(Request $request)
     {
@@ -43,18 +79,17 @@ class IdeaController extends Controller
 
         $ideas = Idea::query();
 
-        if($titleQuery){
-            $ideas->where('title',"like","%".$titleQuery."%");
+        if ($titleQuery) {
+            $ideas->where('title', "like", "%" . $titleQuery . "%");
         }
 
         if ($departmentQuery) {
 
-            $ideas->where("is_anonymous",false);
+            $ideas->where("is_anonymous", false);
 
             $ideas->whereHas("user", function ($q) use ($departmentQuery) {
-                $q->where('department_id',$departmentQuery);
+                $q->where('department_id', $departmentQuery);
             });
-
         }
 
         if ($popularQuery) {
@@ -63,15 +98,15 @@ class IdeaController extends Controller
 
         if ($categoryQuery) {
 
-            $ideas->whereHas('categories',function($q) use($categoryQuery){
-                return $q->where('name',$categoryQuery);
+            $ideas->whereHas('categories', function ($q) use ($categoryQuery) {
+                return $q->where('name', $categoryQuery);
             });
         }
 
-        $ideas->where("is_enabled",true);
+        $ideas->where("is_enabled", true);
 
-        if($latestQuery){
-            $ideas->orderBy("id","desc");
+        if ($latestQuery) {
+            $ideas->orderBy("id", "desc");
         }
 
         $ideas = $ideas->paginate(5);
@@ -86,12 +121,11 @@ class IdeaController extends Controller
 
         $ideaToSubmit = Idea::query();
 
-        $ideaToSubmit->where('is_enabled',false);
+        $ideaToSubmit->where('is_enabled', false);
 
         $ideas = $ideaToSubmit->paginate(5);
 
         return IdeaResource::collection($ideas);
-
     }
 
     /**
@@ -99,7 +133,31 @@ class IdeaController extends Controller
      */
     public function store(StoreIdeaRequest $request)
     {
-        $idea = $this->ideaRepository->create([...$request->all(),'is_enabled'=>false,'user_id' => 1]);
+
+        $activeSystemSetting = SystemSetting::query()->where("status", true)->first();
+        $currentDate = now();
+
+        if (!$activeSystemSetting) {
+            return response()->json([
+                'message' => 'You cannot create idea without active system setting'
+            ], 409);
+        }
+
+        $ideaClosureDate = Carbon::parse($activeSystemSetting->idea_closure_date);
+
+        if ($ideaClosureDate->lessThan($currentDate)) {
+            return response()->json([
+                'message' => 'You cannot create idea after the idea closure date'
+            ], 409);
+        }
+
+        $checkCategory = $this->checkCategory($request->category);
+
+        if($checkCategory){
+            return $checkCategory;
+        }
+
+        $idea = $this->ideaRepository->create([...$request->all(), 'is_enabled' => false, 'user_id' => 1, 'system_setting_id' => $activeSystemSetting->id]);
 
         // Mail::to("kaungpyaeaung8123@gmail.com")->send(new PostIdeaMail($idea));
 
@@ -111,21 +169,17 @@ class IdeaController extends Controller
      */
     public function show($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:ideas,id',
-        ]);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid idea ID'
-            ], 404);
+        $checkID = $this->checkID($id);
+
+        if($checkID){
+            return $checkID;
         }
 
         $department = $this->ideaRepository->find($id);
 
 
         return new DepartmentResource($department);
-
     }
 
     /**
@@ -142,53 +196,83 @@ class IdeaController extends Controller
     public function update(UpdateIdeaRequest $request, $id)
     {
 
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:ideas,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid idea ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
-        $idea = $this->ideaRepository->update($id, [...$request->all(),'is_enabled'=>false]);
+        // check idea is over is over final closure date or not.
+
+        $checkIdeaFinalClosureDate = $this->ideaRepository->find($id);
+
+        $currentDate = now();
+
+        $finalClosureDate = Carbon::parse($checkIdeaFinalClosureDate->systemSetting->final_closure_date);
+
+
+        if ($finalClosureDate->lessThan($currentDate)) {
+            return response()->json([
+                'message' => 'You cannot update idea after the idea closure date'
+            ], 409);
+        }
+
+        $checkCategory = $this->checkCategory($request->category);
+
+        if($checkCategory){
+            return $checkCategory;
+        }
+
+        $idea = $this->ideaRepository->update($id, [...$request->all(), 'is_enabled' => false]);
 
         return response()->json(['message' => 'Idea updated successfully.', 'idea' => new IdeaResource($idea)]);
-
     }
 
-    public function updateIdeaCategory(UpdateIdeaCategoryRequest $request, $id){
+    public function updateIdeaCategory(UpdateIdeaCategoryRequest $request, $id)
+    {
 
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:ideas,id',
-        ]);
+        // check the valid id or not
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid idea ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
-        $idea = $this->ideaRepository->updateIdeaCategory($id,$request->all());
+
+        //check after closure date or not
+        $checkIdeaFinalClosureDate = $this->ideaRepository->find($id);
+
+        $currentDate = now();
+
+        $finalClosureDate = Carbon::parse($checkIdeaFinalClosureDate->systemSetting->final_closure_date);
+
+        if ($finalClosureDate->lessThan($currentDate)) {
+            return response()->json([
+                'message' => 'You cannot update idea after the idea closure date'
+            ], 409);
+        }
+
+        $checkCategory = $this->checkCategory($request->category);
+
+        if($checkCategory){
+            return $checkCategory;
+        }
+
+        $idea = $this->ideaRepository->updateIdeaCategory($id, $request->all());
 
         return response()->json(['message' => "Idea's Category updated successfully.", 'idea' => new IdeaResource($idea)]);
-
     }
 
-    public function submitIdea(SubmitIdeaRequest $request, $id){
+    public function submitIdea(SubmitIdeaRequest $request, $id)
+    {
 
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:ideas,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid idea ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
-        $idea = $this->ideaRepository->submitIdea($id,$request->all());
+        $idea = $this->ideaRepository->submitIdea($id, $request->all());
 
         // if($idea->is_enabled){
 
@@ -197,7 +281,6 @@ class IdeaController extends Controller
         // }
 
         return response()->json(['message' => "Idea's submitted successfully.", 'idea' => new IdeaResource($idea)]);
-
     }
 
 
@@ -206,19 +289,14 @@ class IdeaController extends Controller
      */
     public function destroy($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:ideas,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid idea ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
         $idea = $this->ideaRepository->destroy($id);
 
         return response()->json(['message' => 'Idea deleted successfully.']);
-
     }
 }

@@ -22,6 +22,20 @@ class SystemSettingController extends Controller
         $this->systemSettingRepository = $systemSettingRepository;
     }
 
+    protected function checkID($id){
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:system_settings,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid system setting ID'
+            ], 404);
+        }
+
+        return null;
+    }
+
     public function index()
     {
         $systemSettings = SystemSetting::all();
@@ -42,7 +56,16 @@ class SystemSettingController extends Controller
      */
     public function store(StoreSystemSettingRequest $request)
     {
-        $systemSetting = $this->systemSettingRepository->create($request->all());
+
+        $activeSystemSetting = SystemSetting::query()->where("status",true)->exists();
+
+        if($activeSystemSetting){
+            return response()->json([
+                'message' => 'Already have an active system setting'
+            ], 409);
+        }
+
+        $systemSetting = $this->systemSettingRepository->create([...$request->all(),"status"=>true]);
 
         return $systemSetting;
 
@@ -54,14 +77,10 @@ class SystemSettingController extends Controller
      */
     public function show($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:system_settings,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid system setting ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
         $systemSetting = $this->systemSettingRepository->find($id);
@@ -81,17 +100,22 @@ class SystemSettingController extends Controller
      */
     public function update(UpdateSystemSettingRequest $request, $id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:system_settings,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
+        if($checkID){
+            return $checkID;
+        }
+
+        $updateSystemSetting = $this->systemSettingRepository->find($id);
+
+        if($updateSystemSetting->status !== 1){
             return response()->json([
-                'message' => 'Invalid system setting ID'
-            ], 404);
+                'message' => 'You can only edit active system setting'
+            ], 409);
         }
 
         $systemSetting = $this->systemSettingRepository->update($id, $request->all());
+
         return response()->json(['message' => 'System setting updated successfully.', 'system_setting' => $systemSetting]);
     }
 
@@ -100,14 +124,19 @@ class SystemSettingController extends Controller
      */
     public function destroy($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:system_settings,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid system setting ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
+        }
+
+        $checkCanDelete = $this->systemSettingRepository->find($id);
+
+        $noOfIdeaUsed = $checkCanDelete->ideas->count();
+
+
+        if($noOfIdeaUsed){
+           return response()->json(['message' => 'System setting is used in Idea. Cannot delete system setting']);
         }
 
         $systemSetting = $this->systemSettingRepository->destroy($id);

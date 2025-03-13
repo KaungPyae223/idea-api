@@ -18,8 +18,8 @@ return new class extends Migration
             $table->longText("content");
             $table->boolean("is_anonymous");
             $table->boolean("is_enabled");
+            $table->unsignedBigInteger("system_setting_id");
             $table->timestamps();
-            
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
         });

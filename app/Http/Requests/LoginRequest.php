@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSystemSettingRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,8 @@ class StoreSystemSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'idea_closure_date' => ['required', 'date','after:today' ],
-            'final_closure_date' => ['required', 'date','after:idea_closure_date'],
-            'academic_year' => ['required', 'string','unique:system_settings,academic_year'],
+            'email' => 'required|email',
+            'password' => 'required|string',
         ];
     }
 }

@@ -16,4 +16,9 @@ class SystemSetting extends Model
         "academic_year",
         "status"
     ];
+
+    public function ideas(){
+        return $this->hasMany(Idea::class,"system_setting_id","id");
+    }
+
 }

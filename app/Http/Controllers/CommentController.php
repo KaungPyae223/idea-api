@@ -22,6 +22,20 @@ class CommentController extends Controller
         $this->commentRepository = $commentRepository;
     }
 
+    protected function checkID($id){
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:comments,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid Comment ID'
+            ], 404);
+        }
+
+        return null;
+    }
+
     public function index()
     {
         $comments = Comment::all();
@@ -50,18 +64,7 @@ class CommentController extends Controller
      */
     public function show($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:comments,id',
-        ]);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid comment ID'
-            ], 404);
-        }
-
-        $comment = $this->commentRepository->find($id);
-        return new CommentResource($comment);
     }
 
     /**
@@ -77,14 +80,10 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request, $id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:comments,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid comment ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
         $comment = $this->commentRepository->update($id, [...$request->all(),"user_id" => 1]);
@@ -96,14 +95,10 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:comments,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid comment ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
         $comment = $this->commentRepository->destroy($id);

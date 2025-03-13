@@ -22,6 +22,20 @@ class CategoryController extends Controller
         $this->categoryRepository = $categoryRepository;
     }
 
+    protected function checkID($id){
+        $validated = Validator::make(['id' => $id], [
+            'id' => 'required|integer|exists:categories,id',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json([
+                'message' => 'Invalid category ID'
+            ], 404);
+        }
+
+        return null;
+    }
+
     public function index()
     {
         $categories = Category::all();
@@ -50,14 +64,10 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:categories,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid category ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
         $category = $this->categoryRepository->find($id);
@@ -77,14 +87,10 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, $id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:categories,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid category ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
         }
 
         $category = $this->categoryRepository->update($id, $request->all());
@@ -96,14 +102,19 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $validated = Validator::make(['id' => $id], [
-            'id' => 'required|integer|exists:categories,id',
-        ]);
+        $checkID = $this->checkID($id);
 
-        if ($validated->fails()) {
-            return response()->json([
-                'message' => 'Invalid category ID'
-            ], 404);
+        if($checkID){
+            return $checkID;
+        }
+
+        $checkCanDelete = $this->categoryRepository->find($id);
+
+        $noOfIdeaUsed = $checkCanDelete->ideas->count();
+
+
+        if($noOfIdeaUsed){
+           return response()->json(['message' => 'Category is used in Idea. Cannot delete category']);
         }
 
         $category = $this->categoryRepository->destroy($id);

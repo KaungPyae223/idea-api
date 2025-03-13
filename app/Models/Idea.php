@@ -16,6 +16,7 @@ class Idea extends Model
         'content',
         'is_anonymous',
         'is_enabled',
+        'system_setting_id'
     ];
 
     public function categories () {
@@ -37,4 +38,9 @@ class Idea extends Model
     public function votes() {
         return $this->hasMany(Vote::class,"idea_id","id");
     }
+
+    public function systemSetting() {
+        return $this->belongsTo(SystemSetting::class,'system_setting_id',"id");
+    }
+
 }
