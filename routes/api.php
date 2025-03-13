@@ -26,6 +26,8 @@ Route::prefix("v1")->group(function () {
         });
 
         Route::get('roles', [RoleController::class,"index"]);
+
+        Route::get('users/getIdeas/{id}',[UserController::class,"userIdeas"]);
         Route::post('users/reset-password/{id}',[UserController::class,"restartPassword"]);
         Route::apiResource('users', UserController::class)->except(["destroy"]);
         Route::get('departments/users/{id}',[DepartmentController::class,"departmentUsers"]);
