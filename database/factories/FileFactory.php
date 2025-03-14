@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Permission>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\File>
  */
-class PermissionFactory extends Factory
+class FileFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,9 @@ class PermissionFactory extends Factory
     public function definition(): array
     {
         return [
-            "permission" => fake()->name()
+            "idea_id" => 1,
+            "file_name" => fake()->name(),
+            "file_path" => fake()->name()
         ];
     }
 }

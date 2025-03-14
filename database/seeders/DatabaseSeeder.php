@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Idea;
 use App\Models\SystemSetting;
 use App\Models\User;
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        Category::factory()->create();
         SystemSetting::factory(1)->create();
         Idea::factory(5)->create();
     }

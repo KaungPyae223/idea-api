@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Idea;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +18,16 @@ class CommentFactory extends Factory
      */
     public function definition(): array
     {
+
+        $idea = Idea::factory()->create();
+        $user = User::factory()->create();
+
+
         return [
-            //
+            'idea_id' => $idea->id,
+            'user_id' => $user->id,
+            'comment' => 'This is a test comment',
+            'is_anonymous' => false
         ];
     }
 }

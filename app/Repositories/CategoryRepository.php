@@ -15,7 +15,7 @@ class CategoryRepository extends BasicFunctions
     {
         $this->model = new Category();
     }
-    
+
     public function find($id)
     {
         return $this->model->find($id);
@@ -23,7 +23,7 @@ class CategoryRepository extends BasicFunctions
 
     public function create(array $data)
     {
-        
+
         try {
         DB::beginTransaction();
         $category = $this->model->create($data);
@@ -35,20 +35,20 @@ class CategoryRepository extends BasicFunctions
         ]);
 
         DB::commit();
-        
+
         return $category;
 
         } catch (\Throwable $e) {
             DB::rollBack();
             return $e;
-        } 
+        }
     }
 
     public function update($id, array $data)
     {
         try {
             DB::beginTransaction();
-            $category = $this->find($id);   
+            $category = $this->find($id);
             $this->addLog([
                 "user_id" => 1,
                 "type" => "category",
@@ -68,15 +68,24 @@ class CategoryRepository extends BasicFunctions
     public function destroy($id)
     {
         try {
+            DB::beginTransaction();
             $category = $this->model->find($id);
             if ($category) {
                 $category->delete();
+
+                $this->addLog([
+                    "user_id" => 1,
+                    "type" => "category",
+                    "action" => "delete",
+                    "activity" => "delete category id : " . $category->id,
+                ]);
+                DB::commit();
                 return true;
             }
             return false;
         } catch (\Exception $e) {
-            Log::error('Error deleting category: ' . $e->getMessage());
-            return false;
+            DB::rollBack();
+            return $e;
         }
     }
 }

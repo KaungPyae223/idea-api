@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\IdeaResource;
 use App\Http\Resources\UserResource;
+use App\Models\SystemSetting;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
@@ -38,11 +40,12 @@ class UserController extends Controller
 
         return null;
     }
-    protected function checkPermissions($permissions){
+    protected function checkPermissions($permissions)
+    {
 
         $permissionArr = explode(',', $permissions);
 
-        foreach($permissionArr as $id){
+        foreach ($permissionArr as $id) {
             $validated = Validator::make(['id' => $id], [
                 'id' => 'required|integer|exists:permissions,id',
             ]);
@@ -55,13 +58,13 @@ class UserController extends Controller
         }
 
         return null;
-
     }
-    protected function checkRole($role){
+    protected function checkRole($role)
+    {
 
         $rolesArr = explode(',', $role);
 
-        foreach($rolesArr as $id){
+        foreach ($rolesArr as $id) {
             $validated = Validator::make(['id' => $id], [
                 'id' => 'required|integer|exists:roles,id',
             ]);
@@ -74,7 +77,6 @@ class UserController extends Controller
         }
 
         return null;
-
     }
 
     public function index()
@@ -101,13 +103,13 @@ class UserController extends Controller
 
         $checkRole = $this->checkRole($request->role_id);
 
-        if($checkRole){
+        if ($checkRole) {
             return $checkRole;
         }
 
         $checkPermission = $this->checkPermissions($request->permissions_id);
 
-        if($checkPermission){
+        if ($checkPermission) {
             return $checkPermission;
         }
 
@@ -116,6 +118,40 @@ class UserController extends Controller
         return $user;
 
         return response()->json(['message' => 'User created successfully.', 'user' => new UserResource($user)], 201);
+    }
+
+    public function userIdeas(Request $request, $id)
+    {
+        $checkID = $this->checkID($id);
+
+        if ($checkID) {
+            return $checkID;
+        }
+
+        $user = $this->userRepository->find($id);
+
+        $systemSettingID = SystemSetting::query()->orderBy("id", "desc")->first()->id;
+
+        if ($request->input("systemSettingID")) {
+
+            $systemSettingID = $request->input("systemSettingID");
+
+            $validated = Validator::make(['id' => $systemSettingID], [
+                'id' => 'required|integer|exists:system_settings,id',
+            ]);
+
+            if ($validated->fails()) {
+                return response()->json([
+                    'message' => 'Invalid system setting ID'
+                ], 404);
+            }
+        }
+
+        $ideas = $user->ideas()
+            ->where("system_setting_id", $systemSettingID)
+            ->paginate(5);
+
+        return IdeaResource::collection($ideas);
     }
 
     /**
@@ -178,13 +214,13 @@ class UserController extends Controller
 
         $checkRole = $this->checkRole($request->role_id);
 
-        if($checkRole){
+        if ($checkRole) {
             return $checkRole;
         }
 
         $checkPermission = $this->checkPermissions($request->permissions_id);
 
-        if($checkPermission){
+        if ($checkPermission) {
             return $checkPermission;
         }
 

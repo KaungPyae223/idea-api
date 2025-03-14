@@ -211,7 +211,7 @@ class IdeaRepository extends BasicFunctions
 
             DB::commit();
 
-            return $idea;
+            return true;
 
         }catch (\Throwable $e) {
 

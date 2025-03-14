@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Idea;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +18,14 @@ class VoteFactory extends Factory
      */
     public function definition(): array
     {
+
+        $user = User::factory()->create();
+        $idea = Idea::factory()->create();
+
         return [
-            //
+            "user_id" => $user->id,
+            "idea_id" => $idea->id,
+            "vote_value" => 1
         ];
     }
 }

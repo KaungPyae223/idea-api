@@ -17,7 +17,8 @@ class DepartmentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "department_name" => fake()->name(),
+            "QACoordinatorID" => 1
         ];
     }
 }
