@@ -17,7 +17,7 @@ class PermissionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "permission" => fake()->name()
         ];
     }
 }
