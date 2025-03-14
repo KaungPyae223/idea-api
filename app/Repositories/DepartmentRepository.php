@@ -82,7 +82,7 @@ class DepartmentRepository extends BasicFunctions
     {
         try {
             DB::beginTransaction();
-            
+
             $department = $this->find($id);
 
             $this->addLog([
@@ -96,7 +96,7 @@ class DepartmentRepository extends BasicFunctions
 
             DB::commit();
 
-            return $department;
+            return true;
         } catch (\Throwable $e) {
 
             DB::rollBack();

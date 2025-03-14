@@ -68,6 +68,15 @@ class CommentRepository extends BasicFunctions
 
     public function destroy($id)
     {
-
+        try {
+            $comment = $this->model->find($id);
+            if ($comment) {
+                $comment->delete();
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) {
+            return $e;
+        }
     }
 }

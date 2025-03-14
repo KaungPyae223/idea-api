@@ -80,6 +80,8 @@ class SystemSettingRepository extends BasicFunctions
     public function destroy($id)
     {
         try {
+            DB::beginTransaction();
+
             $systemSetting = $this->model->find($id);
             if ($systemSetting ) {
                 $systemSetting->delete();
@@ -89,9 +91,13 @@ class SystemSettingRepository extends BasicFunctions
                     "action" => "delete",
                     "activity" => "delete system setting id : " . $systemSetting->id,
                 ]);
+
+                DB::commit();
+                return true;
             }
-            return $systemSetting ;
+            return false ;
         } catch (\Throwable $e) {
+            DB::rollBack();
 
             return $e;
         }

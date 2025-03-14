@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         Category::factory()->create();
-        // SystemSetting::factory(1)->create();
-        // Idea::factory(5)->create();
+        SystemSetting::factory(1)->create();
+        Idea::factory(5)->create();
     }
 }

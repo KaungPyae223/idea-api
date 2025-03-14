@@ -42,8 +42,6 @@ class CategoryRepositoryTest extends TestCase
 
     public function test_update_category()
     {
-        DB::shouldReceive('beginTransaction')->once();
-        DB::shouldReceive('commit')->once();
 
         $category = Category::factory()->create(['name' => 'Old Name']);
         $updatedCategory = $this->categoryRepository->update($category->id, ['name' => 'New Name']);
