@@ -40,6 +40,8 @@ Route::prefix("v1")->group(function () {
         Route::apiResource('system-setting',SystemSettingController::class);
 
         Route::put('update-idea-category/{id}',[IdeaController::class,"updateIdeaCategory"]);
+
+        Route::get('idea/get-comment/{id}',[IdeaController::class,'ideaComments']);
         Route::get('idea/to-submit',[IdeaController::class,"ideasToSubmit"]);
         Route::put('idea/submit/{id}',[IdeaController::class,"submitIdea"]);
         Route::apiResource('idea',IdeaController::class);

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreIdeaRequest;
 use App\Http\Requests\SubmitIdeaRequest;
 use App\Http\Requests\UpdateIdeaCategoryRequest;
 use App\Http\Requests\UpdateIdeaRequest;
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\DepartmentResource;
 use App\Http\Resources\IdeaResource;
 use App\Mail\ApproveMail;
@@ -113,6 +114,21 @@ class IdeaController extends Controller
         $ideas = $ideas->paginate(5);
 
         return IdeaResource::collection($ideas);
+    }
+
+    public function ideaComments($id){
+        $checkID = $this->checkID($id);
+
+        if($checkID){
+            return $checkID;
+        }
+
+        $ideas = $this->ideaRepository->find($id);
+
+        $comments = $ideas->comment;
+
+        return CommentResource::collection($comments);
+
     }
 
 
