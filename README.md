@@ -113,6 +113,9 @@
 **Endpoint:** `PUT /idea/{id}`
 **Request Body:** (Same as Create Idea)
 
+
+
+
 ### Submit Idea
 **Endpoint:** `PUT /idea/submit/{id}`
 **Request Body:**
@@ -126,6 +129,9 @@
 
 ### Get Specific Idea
 **Endpoint:** `GET /idea/{id}`
+
+### Get Idea's Comments
+**Endpoint:** `GET /idea/get-comment/{id}`
 
 ---
 
