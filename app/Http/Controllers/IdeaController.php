@@ -193,10 +193,10 @@ class IdeaController extends Controller
             return $checkID;
         }
 
-        $department = $this->ideaRepository->find($id);
+        $idea = $this->ideaRepository->find($id);
 
 
-        return new DepartmentResource($department);
+        return new IdeaResource($idea);
     }
 
     /**
@@ -219,15 +219,15 @@ class IdeaController extends Controller
             return $checkID;
         }
 
-        // check idea is over is over final closure date or not.
+        // check idea is over is over idea closure date or not.
 
         $checkIdeaClosureDate = $this->ideaRepository->find($id);
-        $ideaClosureDate = Carbon::parse($checkIdeaClosureDate);
+        $ideaClosureDate = Carbon::parse($checkIdeaClosureDate->SystemSetting->idea_closure_date);
         $currentDate = now();
 
         if ($ideaClosureDate->lessThan($currentDate)) {
             return response()->json([
-                'message' => 'You cannot create idea after the idea closure date'
+                'message' => 'You cannot update idea after the idea closure date'
             ], 409);
         }
 
@@ -253,13 +253,15 @@ class IdeaController extends Controller
         }
 
 
-        //check after closure date or not
-        $checkIdeaFinalClosureDate = $this->ideaRepository->find($id);
+        // check idea is over is over idea closure date or not.
 
+        $checkIdeaClosureDate = $this->ideaRepository->find($id);
+        $ideaClosureDate = Carbon::parse($checkIdeaClosureDate->SystemSetting->idea_closure_date);
+        $currentDate = now();
 
-        if ($checkIdeaFinalClosureDate->status) {
+        if ($ideaClosureDate->lessThan($currentDate)) {
             return response()->json([
-                'message' => 'Cannot update idea after the idea closure date'
+                'message' => 'You cannot update category after the idea closure date'
             ], 409);
         }
 

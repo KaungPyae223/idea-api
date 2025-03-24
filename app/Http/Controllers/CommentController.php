@@ -63,9 +63,9 @@ class CommentController extends Controller
 
         $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
 
-        if ($checkIdeaFinalClosureDate->status) {
+        if ($checkIdeaFinalClosureDate->SystemSetting->status) {
             return response()->json([
-                'message' => 'Cannot comment idea after the idea closure date'
+                'message' => 'Cannot comment idea after the final closure date'
             ], 409);
         }
 
@@ -102,9 +102,11 @@ class CommentController extends Controller
 
         $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
 
-        if ($checkIdeaFinalClosureDate->status) {
+        return $checkIdeaFinalClosureDate;
+
+        if ($checkIdeaFinalClosureDate->SystemSetting->status) {
             return response()->json([
-                'message' => 'Cannot comment idea after the idea closure date'
+                'message' => 'Cannot comment idea after the final closure date'
             ], 409);
         }
 
