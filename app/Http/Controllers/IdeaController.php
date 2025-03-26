@@ -7,7 +7,6 @@ use App\Http\Requests\SubmitIdeaRequest;
 use App\Http\Requests\UpdateIdeaCategoryRequest;
 use App\Http\Requests\UpdateIdeaRequest;
 use App\Http\Resources\CommentResource;
-use App\Http\Resources\DepartmentResource;
 use App\Http\Resources\IdeaResource;
 use App\Mail\ApproveMail;
 use App\Mail\PostIdeaMail;
@@ -16,7 +15,6 @@ use App\Models\SystemSetting;
 use App\Repositories\IdeaRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -133,12 +131,16 @@ class IdeaController extends Controller
 
 
 
-    public function ideasToSubmit()
+    public function ideasToSubmit(Request $request)
     {
+
+        $user_id = $request->user()->id;
 
         $ideaToSubmit = Idea::query();
 
-        $ideaToSubmit->where('is_enabled', false);
+        $ideaToSubmit->where('is_enabled', false)->whereHas('user.department',function($q) use($user_id){
+            return $q->where('QACoordinatorID',$user_id);
+        });
 
         $ideas = $ideaToSubmit->paginate(5);
 
@@ -150,6 +152,11 @@ class IdeaController extends Controller
      */
     public function store(StoreIdeaRequest $request)
     {
+
+
+        if(!$this->checkPermissions("Create Idea")){
+            return response()->json(["message"=>"unauthorized"],401);
+        }
 
         $activeSystemSetting = SystemSetting::query()->where("status", true)->first();
         $currentDate = now();
@@ -174,9 +181,12 @@ class IdeaController extends Controller
             return $checkCategory;
         }
 
-        $idea = $this->ideaRepository->create([...$request->all(), 'is_enabled' => false, 'user_id' => 1, 'system_setting_id' => $activeSystemSetting->id]);
+        $user = $request->user();
 
-        // Mail::to("kaungpyaeaung8123@gmail.com")->send(new PostIdeaMail($idea));
+
+        $idea = $this->ideaRepository->create([...$request->all(), 'is_enabled' => false, 'user_id' => $user->id, 'system_setting_id' => $activeSystemSetting->id]);
+
+        // Mail::to($user->email)->send(new PostIdeaMail($idea));
 
         return response()->json(['message' => 'Idea created successfully.', 'idea' => new IdeaResource($idea)], 201);
     }
@@ -213,10 +223,21 @@ class IdeaController extends Controller
     public function update(UpdateIdeaRequest $request, $id)
     {
 
+        if(!$this->checkPermissions("Create Idea")){
+            return response()->json(["message"=>"unauthorized"],401);
+        }
+
+
         $checkID = $this->checkID($id);
 
         if ($checkID) {
             return $checkID;
+        }
+
+        $idea = $this->ideaRepository->find($id);
+
+        if($idea->user_id !== $request->user()->id){
+            return response()->json(["message"=>"unauthorized"],401);
         }
 
         // check idea is over is over idea closure date or not.
@@ -237,6 +258,7 @@ class IdeaController extends Controller
             return $checkCategory;
         }
 
+
         $idea = $this->ideaRepository->update($id, [...$request->all(), 'is_enabled' => false]);
 
         return response()->json(['message' => 'Idea updated successfully.', 'idea' => new IdeaResource($idea)]);
@@ -250,6 +272,12 @@ class IdeaController extends Controller
 
         if ($checkID) {
             return $checkID;
+        }
+
+        $idea = $this->ideaRepository->find($id);
+
+        if($idea->user_id !== $request->user()->id && $idea->user->department->QACoordinatorID !== $request->user()->id){
+            return response()->json(["message"=>"unauthorized"],401);
         }
 
 
@@ -278,6 +306,17 @@ class IdeaController extends Controller
 
     public function submitIdea(SubmitIdeaRequest $request, $id)
     {
+        $checkID = $this->checkID($id);
+
+        if ($checkID) {
+            return $checkID;
+        }
+
+        $idea = $this->ideaRepository->find($id);
+
+        if($idea->user->department->QACoordinatorID !== $request->user()->id){
+            return response()->json(["message"=>"unauthorized"],401);
+        }
 
         $checkID = $this->checkID($id);
 
@@ -287,11 +326,11 @@ class IdeaController extends Controller
 
         $idea = $this->ideaRepository->submitIdea($id, $request->all());
 
-        // if($idea->is_enabled){
+        if($idea->is_enabled){
 
-        //     Mail::to("kaungpyaeaung8123@gmail.com")->send(new ApproveMail($idea));
+            // Mail::to($idea->user->email)->send(new ApproveMail($idea));
 
-        // }
+        }
 
         return response()->json(['message' => "Idea's submitted successfully.", 'idea' => new IdeaResource($idea)]);
     }
@@ -300,12 +339,18 @@ class IdeaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         $checkID = $this->checkID($id);
 
         if ($checkID) {
             return $checkID;
+        }
+
+        $idea = $this->ideaRepository->find($id);
+
+        if($idea->user_id !== $request->user()->id && $idea->user->department->QACoordinatorID !== $request->user()->id){
+            return response()->json(["message"=>"unauthorized"],401);
         }
 
         $idea = $this->ideaRepository->destroy($id);

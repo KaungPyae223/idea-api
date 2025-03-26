@@ -154,6 +154,41 @@ class UserController extends Controller
         return IdeaResource::collection($ideas);
     }
 
+    public function userIdeasByAdmin(Request $request, $id)
+    {
+        $checkID = $this->checkID($id);
+
+        if ($checkID) {
+            return $checkID;
+        }
+
+        $user = $this->userRepository->find($id);
+
+        $systemSettingID = SystemSetting::query()->orderBy("id", "desc")->first()->id;
+
+        if ($request->input("systemSettingID")) {
+
+            $systemSettingID = $request->input("systemSettingID");
+
+            $validated = Validator::make(['id' => $systemSettingID], [
+                'id' => 'required|integer|exists:system_settings,id',
+            ]);
+
+            if ($validated->fails()) {
+                return response()->json([
+                    'message' => 'Invalid system setting ID'
+                ], 404);
+            }
+        }
+
+        $ideas = $user->ideas()
+            ->where("system_setting_id", $systemSettingID)
+            ->where("is_anonymous",false)
+            ->paginate(5);
+
+        return IdeaResource::collection($ideas);
+    }
+
     /**
      * Display the specified resource.
      */
