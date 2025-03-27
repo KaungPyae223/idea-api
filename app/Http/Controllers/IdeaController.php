@@ -8,8 +8,7 @@ use App\Http\Requests\UpdateIdeaCategoryRequest;
 use App\Http\Requests\UpdateIdeaRequest;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\IdeaResource;
-use App\Mail\ApproveMail;
-use App\Mail\PostIdeaMail;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Idea;
 use App\Models\SystemSetting;
 use App\Repositories\IdeaRepository;
@@ -24,6 +23,7 @@ class IdeaController extends Controller
      * Display a listing of the resource.
      */
 
+    use AuthorizesRequests;
     protected $ideaRepository;
 
     public function __construct(IdeaRepository $ideaRepository)
@@ -154,9 +154,7 @@ class IdeaController extends Controller
     {
 
 
-        if(!$this->checkPermissions("Create Idea")){
-            return response()->json(["message"=>"unauthorized"],401);
-        }
+        $this->authorize("create");
 
         $activeSystemSetting = SystemSetting::query()->where("status", true)->first();
         $currentDate = now();
@@ -223,11 +221,6 @@ class IdeaController extends Controller
     public function update(UpdateIdeaRequest $request, $id)
     {
 
-        if(!$this->checkPermissions("Create Idea")){
-            return response()->json(["message"=>"unauthorized"],401);
-        }
-
-
         $checkID = $this->checkID($id);
 
         if ($checkID) {
@@ -236,9 +229,8 @@ class IdeaController extends Controller
 
         $idea = $this->ideaRepository->find($id);
 
-        if($idea->user_id !== $request->user()->id){
-            return response()->json(["message"=>"unauthorized"],401);
-        }
+
+        $this->authorize('update', $idea);
 
         // check idea is over is over idea closure date or not.
 
@@ -276,10 +268,7 @@ class IdeaController extends Controller
 
         $idea = $this->ideaRepository->find($id);
 
-        if($idea->user_id !== $request->user()->id && $idea->user->department->QACoordinatorID !== $request->user()->id){
-            return response()->json(["message"=>"unauthorized"],401);
-        }
-
+        $this->authorize("updateCategory",$idea);
 
         // check idea is over is over idea closure date or not.
 
@@ -314,9 +303,7 @@ class IdeaController extends Controller
 
         $idea = $this->ideaRepository->find($id);
 
-        if($idea->user->department->QACoordinatorID !== $request->user()->id){
-            return response()->json(["message"=>"unauthorized"],401);
-        }
+        $this->authorize("submitIdea",$idea);
 
         $checkID = $this->checkID($id);
 
@@ -349,9 +336,7 @@ class IdeaController extends Controller
 
         $idea = $this->ideaRepository->find($id);
 
-        if($idea->user_id !== $request->user()->id && $idea->user->department->QACoordinatorID !== $request->user()->id){
-            return response()->json(["message"=>"unauthorized"],401);
-        }
+        $this->authorize("delete",$idea);
 
         $idea = $this->ideaRepository->destroy($id);
 

@@ -12,13 +12,14 @@ use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-
+    use AuthorizesRequests;
     protected $userRepository;
 
     public function __construct(UserRepository $userRepository)
@@ -100,6 +101,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
 
+        $this->authorize("create");
 
         $checkRole = $this->checkRole($request->role_id);
 
@@ -122,6 +124,9 @@ class UserController extends Controller
 
     public function userIdeas(Request $request, $id)
     {
+
+        $this->authorize("userSelectIdea",$id);
+
         $checkID = $this->checkID($id);
 
         if ($checkID) {
@@ -200,13 +205,15 @@ class UserController extends Controller
             return $checkID;
         }
 
-        $department = $this->userRepository->find($id);
+        $user = $this->userRepository->find($id);
 
-        return new UserResource($department);
+        return new UserResource($user);
     }
 
     public function restartPassword($id)
     {
+
+        $this->authorize("resetPassword");
 
         $checkID = $this->checkID($id);
 
@@ -241,11 +248,15 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, string $id)
     {
 
+        $this->authorize("update");
+
         $checkID = $this->checkID($id);
 
         if ($checkID) {
             return $checkID;
         }
+
+
 
         $checkRole = $this->checkRole($request->role_id);
 

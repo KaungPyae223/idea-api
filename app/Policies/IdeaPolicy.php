@@ -29,7 +29,7 @@ class IdeaPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->permissions->contains('permission', "Create Idea");
     }
 
     /**
@@ -37,7 +37,12 @@ class IdeaPolicy
      */
     public function update(User $user, Idea $idea): bool
     {
-        return false;
+        return $idea->user_id === $user->id;
+    }
+
+    public function submitIdea(User $user, Idea $idea): bool
+    {
+        return $idea->user->department->QACoordinatorID === $user->id;
     }
 
     /**
@@ -45,7 +50,12 @@ class IdeaPolicy
      */
     public function delete(User $user, Idea $idea): bool
     {
-        return false;
+        return $idea->user->department->QACoordinatorID === $user->id || $idea->user_id === $user->id;
+    }
+
+    public function updateCategory(User $user,Idea $idea): bool
+    {
+        return $idea->user_id === $user->id || $idea->user->department->QACoordinatorID === $user->id;
     }
 
     /**
