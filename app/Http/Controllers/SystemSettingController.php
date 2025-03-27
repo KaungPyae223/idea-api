@@ -9,6 +9,8 @@ use App\Models\SystemSetting;
 use App\Repositories\SystemSettingRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 
 class SystemSettingController extends Controller
 {
@@ -16,6 +18,7 @@ class SystemSettingController extends Controller
      * Display a listing of the resource.
      */
 
+     use AuthorizesRequests;
     protected $systemSettingRepository;
 
     public function __construct(SystemSettingRepository $systemSettingRepository)
@@ -59,6 +62,8 @@ class SystemSettingController extends Controller
     public function store(StoreSystemSettingRequest $request)
     {
 
+        $this->authorize("checkRole");
+
         $activeSystemSetting = SystemSetting::query()->where("status", true)->exists();
 
         if ($activeSystemSetting) {
@@ -91,6 +96,7 @@ class SystemSettingController extends Controller
 
     public function exportCSV($id)
     {
+
 
         $checkID = $this->checkID($id);
 
@@ -160,6 +166,10 @@ class SystemSettingController extends Controller
      */
     public function update(UpdateSystemSettingRequest $request, $id)
     {
+
+        $this->authorize("checkRole");
+
+
         $checkID = $this->checkID($id);
 
         if ($checkID) {
@@ -184,6 +194,9 @@ class SystemSettingController extends Controller
      */
     public function destroy($id)
     {
+
+        $this->authorize("checkRole");
+
         $checkID = $this->checkID($id);
 
         if ($checkID) {

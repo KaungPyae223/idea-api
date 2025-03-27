@@ -6,8 +6,10 @@ use App\Http\Requests\StoreRolePermissionRequest;
 use App\Http\Requests\UpdateRolePermissionRequest;
 use App\Models\RolePermission;
 
+
 class RolePermissionController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
