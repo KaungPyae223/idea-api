@@ -8,8 +8,8 @@ use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
 use App\Repositories\CommentRepository;
 use App\Repositories\IdeaRepository;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class CommentController extends Controller
 {
@@ -17,6 +17,7 @@ class CommentController extends Controller
      * Display a listing of the resource.
      */
 
+     use AuthorizesRequests;
      protected $commentRepository;
      protected $ideaRepository;
 
@@ -61,6 +62,8 @@ class CommentController extends Controller
     public function store(StoreCommentRequest $request)
     {
 
+        $this->authorize("create");
+
         $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
 
         if ($checkIdeaFinalClosureDate->SystemSetting->status) {
@@ -100,6 +103,10 @@ class CommentController extends Controller
             return $checkID;
         }
 
+        $comment = $this->commentRepository->find($id);
+
+        $this->authorize("update",$comment);
+
         $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
 
         return $checkIdeaFinalClosureDate;
@@ -124,6 +131,10 @@ class CommentController extends Controller
         if($checkID){
             return $checkID;
         }
+
+        $comment = $this->commentRepository->find($id);
+
+        $this->authorize("delete",$comment);
 
         $comment = $this->commentRepository->destroy($id);
         return response()->json(['message' => 'Comment deleted successfully.']);

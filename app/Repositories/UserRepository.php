@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 use App\Repositories\BasicFunctions\BasicFunctions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -34,7 +35,7 @@ class UserRepository extends BasicFunctions
 
             $user = $this->model->create([
                 "name" => $data["name"],
-                "photo" => $data["photo"], 
+                "photo" => $data["photo"],
                 "email" => $data["email"],
                 "department_id" => $data["department_id"],
                 "password" => Hash::make("idea")
@@ -45,7 +46,7 @@ class UserRepository extends BasicFunctions
             $user->permissions()->attach($permissionIDs);
 
             $this->addLog([
-                "user_id" => 1,
+                "user_id" => Auth::id(),
                 "type" => "user",
                 "action" => "create",
                 "activity" => "create user " . $data['name'],
@@ -85,7 +86,8 @@ class UserRepository extends BasicFunctions
             $permissionsToAdd = array_diff($permissionIDs, $userPermissions);
 
             $this->addLog([
-                "user_id" => 1,
+               "user_id" => Auth::id(),
+
                 "type" => "user",
                 "action" => "update",
                 "activity" => "Update user " . $id . " / " . $this->compareDiff("name", $user->name, $data["name"]) . $this->compareDiff("email", $user->email, $data["email"]) . $this->compareDiff("department_id", $user->department_id, $data["department_id"]) . $this->compareDiff("role_ids", $originalRoles, $data["role_id"]) . $this->compareDiff("permissions_ids", $originalPermissions, $data["permissions_id"])

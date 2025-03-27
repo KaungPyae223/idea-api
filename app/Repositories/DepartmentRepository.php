@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Department;
 use App\Repositories\BasicFunctions\BasicFunctions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DepartmentRepository extends BasicFunctions
@@ -30,7 +31,7 @@ class DepartmentRepository extends BasicFunctions
             $department = $this->model->create($data);
 
             $this->addLog([
-                "user_id" => 1,
+                "user_id" => Auth::id(),
                 "type" => "department",
                 "action" => "create",
                 "activity" => "create department ".$data["department_name"],
@@ -58,7 +59,8 @@ class DepartmentRepository extends BasicFunctions
 
 
             $this->addLog([
-                "user_id" => 1,
+               "user_id" => Auth::id(),
+
                 "type" => "department",
                 "action" => "update",
                 "activity" => "update department id : " . $id . " / " . $this->compareDiff("department_name", $department->department_name, $data["department_name"]) . $this->compareDiff("QACoordinatorID", $department->QACoordinatorID, $data["QACoordinatorID"]),
@@ -86,7 +88,8 @@ class DepartmentRepository extends BasicFunctions
             $department = $this->find($id);
 
             $this->addLog([
-                "user_id" => 1,
+               "user_id" => Auth::id(),
+
                 "type" => "department",
                 "action" => "delete",
                 "activity" => "delete department name : " . $department->department_name,

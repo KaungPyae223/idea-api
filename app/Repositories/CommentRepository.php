@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\Comment;
 use App\Repositories\BasicFunctions\BasicFunctions;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class CommentRepository extends BasicFunctions
 {

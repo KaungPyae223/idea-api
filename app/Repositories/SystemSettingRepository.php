@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\SystemSetting;
 use App\Repositories\BasicFunctions\BasicFunctions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SystemSettingRepository extends BasicFunctions
@@ -31,7 +32,7 @@ class SystemSettingRepository extends BasicFunctions
             $systemSetting = $this->model->create($data);
 
             $this->addLog([
-                "user_id" => 1,
+                "user_id" => Auth::id(),
                 "type" => "system-setting",
                 "action" => "create",
                 "activity" => "create system setting " . $data["academic_year"],
@@ -59,7 +60,8 @@ class SystemSettingRepository extends BasicFunctions
             }
 
             $this->addLog([
-                "user_id" => 1,
+               "user_id" => Auth::id(),
+
                 "type" => "system_setting",
                 "action" => "update",
                 "activity" => "update system setting id : " . $id . " / " . $this->compareDiff("idea_closure_date", $systemSetting->idea_closure_date, $data["idea_closure_date"]) . $this->compareDiff("final_closure_date", $systemSetting->final_closure_date, $data["final_closure_date"]) . $this->compareDiff("academic_year", $systemSetting->academic_year, $data["academic_year"]),
@@ -86,7 +88,8 @@ class SystemSettingRepository extends BasicFunctions
             if ($systemSetting ) {
                 $systemSetting->delete();
                 $this->addLog([
-                    "user_id" => 1,
+                   "user_id" => Auth::id(),
+
                     "type" => "system_setting",
                     "action" => "delete",
                     "activity" => "delete system setting id : " . $systemSetting->id,

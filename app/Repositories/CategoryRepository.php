@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Category;
 use App\Repositories\BasicFunctions\BasicFunctions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -28,7 +29,7 @@ class CategoryRepository extends BasicFunctions
         DB::beginTransaction();
         $category = $this->model->create($data);
         $this->addLog([
-            "user_id" => 1,
+            "user_id" => Auth::id(),
             "type" => "category",
             "action" => "create",
             "activity" => "create category ".$data["name"],
@@ -50,7 +51,8 @@ class CategoryRepository extends BasicFunctions
             DB::beginTransaction();
             $category = $this->find($id);
             $this->addLog([
-                "user_id" => 1,
+               "user_id" => Auth::id(),
+
                 "type" => "category",
                 "action" => "update",
                 "activity" => "update category id : " . $id . " / " . $this->compareDiff("name", $category->name, $data["name"]),
@@ -74,7 +76,8 @@ class CategoryRepository extends BasicFunctions
                 $category->delete();
 
                 $this->addLog([
-                    "user_id" => 1,
+                   "user_id" => Auth::id(),
+
                     "type" => "category",
                     "action" => "delete",
                     "activity" => "delete category id : " . $category->id,

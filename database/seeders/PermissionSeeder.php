@@ -17,7 +17,7 @@ class PermissionSeeder extends Seeder
             ['permission' => 'Create User'],
             ['permission' => 'Update User'],
             ['permission' => 'Reset Password'],
-            ['permission' => 'View User'],
+            ['permission' => 'Manage Department'],
             ['permission' => 'View User Logs'],
             ['permission' => 'Manage System Setting'],
             ['permission' => 'Remove Idea'],
