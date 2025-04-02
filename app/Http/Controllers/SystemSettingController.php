@@ -62,7 +62,7 @@ class SystemSettingController extends Controller
     public function store(StoreSystemSettingRequest $request)
     {
 
-        $this->authorize("checkRole");
+        $this->authorize("checkPermission");
 
         $activeSystemSetting = SystemSetting::query()->where("status", true)->exists();
 
@@ -167,7 +167,7 @@ class SystemSettingController extends Controller
     public function update(UpdateSystemSettingRequest $request, $id)
     {
 
-        $this->authorize("checkRole");
+        $this->authorize("checkPermission");
 
 
         $checkID = $this->checkID($id);
@@ -195,7 +195,7 @@ class SystemSettingController extends Controller
     public function destroy($id)
     {
 
-        $this->authorize("checkRole");
+        $this->authorize("checkPermission");
 
         $checkID = $this->checkID($id);
 

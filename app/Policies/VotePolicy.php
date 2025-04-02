@@ -45,7 +45,7 @@ class VotePolicy
      */
     public function delete(User $user, Vote $vote): bool
     {
-        return false;
+        return $vote->user_id === $user->id;
     }
 
     /**

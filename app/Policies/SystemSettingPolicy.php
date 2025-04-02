@@ -11,7 +11,7 @@ class SystemSettingPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function checkRole(User $user): bool
+    public function checkPermission(User $user): bool
     {
         return $user->permissions->contains('permission', "Manage System Setting");
     }
