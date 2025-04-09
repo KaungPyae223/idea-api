@@ -66,13 +66,13 @@ class CommentController extends Controller
 
         $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
 
-        if ($checkIdeaFinalClosureDate->SystemSetting->status) {
+        if (!$checkIdeaFinalClosureDate->SystemSetting->status) {
             return response()->json([
                 'message' => 'Cannot comment idea after the final closure date'
             ], 409);
         }
 
-        $comment = $this->commentRepository->create([...$request->all(),"user_id" => 1]);
+        $comment = $this->commentRepository->create([...$request->all(),"user_id" => $request->user()->id]);
         return response()->json(['message' => 'Comment created successfully.', 'comment' => new CommentResource($comment)], 201);
     }
 
@@ -109,15 +109,13 @@ class CommentController extends Controller
 
         $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
 
-        return $checkIdeaFinalClosureDate;
-
-        if ($checkIdeaFinalClosureDate->SystemSetting->status) {
+        if (!$checkIdeaFinalClosureDate->SystemSetting->status) {
             return response()->json([
                 'message' => 'Cannot comment idea after the final closure date'
             ], 409);
         }
 
-        $comment = $this->commentRepository->update($id, [...$request->all(),"user_id" => 1]);
+        $comment = $this->commentRepository->update($id, [...$request->all(),"user_id" => $request->user()->id]);
         return response()->json(['message' => 'Comment updated successfully.', 'comments' => $comment]);
     }
 
