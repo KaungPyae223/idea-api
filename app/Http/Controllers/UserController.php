@@ -210,6 +210,22 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
+    public function getLogInData($id){
+
+        $checkID = $this->checkID($id);
+
+        if ($checkID) {
+            return $checkID;
+        }
+
+        $user = $this->userRepository->find($id);
+
+        $logInActivities = $user->logIn;
+
+        return response()->json($logInActivities);
+
+    }
+
     public function restartPassword($id)
     {
 

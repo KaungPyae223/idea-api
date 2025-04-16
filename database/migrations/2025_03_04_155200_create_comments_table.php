@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger("idea_id");
             $table->longText("comment");
             $table->boolean("is_anonymous");
+            $table->boolean("hidden")->default(false);
             $table->timestamps();
 
             $table->foreign('idea_id')->references('id')->on('ideas')->onDelete('cascade');

@@ -54,5 +54,7 @@ Route::prefix("v1")->group(function () {
 
         Route::get('logs', [logController::class, 'viewLog']);
         Route::get('user-log/{id}', [logController::class, 'userLog']);
+
+        Route::get('/log-in-activities/{id}',[UserController::class,'getLogInData']);
     });
 });
