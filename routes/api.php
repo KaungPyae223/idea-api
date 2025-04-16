@@ -36,9 +36,11 @@ Route::prefix("v1")->group(function () {
         Route::apiResource('users', UserController::class)->except(["destroy"]);
         Route::get('departments/users/{id}', [DepartmentController::class, "departmentUsers"]);
         Route::apiResource('departments', DepartmentController::class);
-        Route::apiResource('categories', CategoryController::class);
-        Route::apiResource('comments', CommentController::class)->except(["show"]);
-        Route::apiResource('votes', VoteController::class)->only(["create", "destroy"]);
+
+        Route::apiResource('categories',CategoryController::class);
+        Route::apiResource('comments',CommentController::class)->except(["show"]);
+
+        Route::apiResource('votes',VoteController::class)->only(["store","destroy"]);
 
         Route::get('system-setting/getCSV/{id}', [SystemSettingController::class, "exportCSV"]);
         Route::apiResource('system-setting', SystemSettingController::class);

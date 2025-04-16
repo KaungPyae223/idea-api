@@ -68,9 +68,9 @@ class DepartmentRepository extends BasicFunctions
 
             $department->update($data);
 
-            return $department;
-
             DB::commit();
+
+            return $department;
         } catch (\Throwable $e) {
 
             DB::rollBack();
