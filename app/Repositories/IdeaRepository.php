@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Idea;
 use App\Repositories\BasicFunctions\BasicFunctions;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class IdeaRepository extends BasicFunctions
@@ -133,7 +134,7 @@ class IdeaRepository extends BasicFunctions
             }
 
             $this->addLog([
-                "user_id" => 1,
+               "user_id" => Auth::id(),
                 "type" => "idea",
                 "action" => "update",
                 "activity" => "Update the Idea Category" ,
@@ -161,7 +162,7 @@ class IdeaRepository extends BasicFunctions
             $idea = $this->find($id);
 
             $this->addLog([
-                "user_id" => 1,
+               "user_id" => Auth::id(),
                 "type" => "idea",
                 "action" => $data["is_enabled"]? "submit":"un_submit",
                 "activity" => $data["is_enabled"]? "submit":"un_submit" . " idea ".$idea->id,
@@ -191,7 +192,7 @@ class IdeaRepository extends BasicFunctions
             $idea = $this->find($id);
 
             $this->addLog([
-                "user_id" => 1,
+               "user_id" => Auth::id(),
                 "type" => "idea",
                 "action" => "delete",
                 "activity" => "Delete the Idea ".$idea->id,

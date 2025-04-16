@@ -27,9 +27,10 @@ class CategoryPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function checkRole(User $user): bool
     {
-        return false;
+
+        return $user->permissions->contains('permission', "Manage Category");
     }
 
     /**
@@ -37,7 +38,7 @@ class CategoryPolicy
      */
     public function update(User $user, Category $category): bool
     {
-        return false;
+
     }
 
     /**
@@ -45,7 +46,7 @@ class CategoryPolicy
      */
     public function delete(User $user, Category $category): bool
     {
-        return false;
+
     }
 
     /**

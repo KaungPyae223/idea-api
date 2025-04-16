@@ -11,7 +11,7 @@ class SubmitIdeaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user->permissions->contains('permission', 'Idea Submission');
     }
 
     /**

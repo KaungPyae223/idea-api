@@ -8,13 +8,15 @@ use App\Http\Requests\UpdateVoteRequest;
 use App\Models\Vote;
 use App\Repositories\VoteRepository;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 
 class VoteController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-
+    use AuthorizesRequests;
     protected $voteRepository;
 
     public function __construct(VoteRepository $voteRepository)
@@ -41,11 +43,11 @@ class VoteController extends Controller
     public function store(StoreVoteRequest $request)
     {
 
-        $already_vote  = Vote::query()->where("idea_id",$request->idea_id)->where("user_id",1)->first();
+        $already_vote  = Vote::query()->where("idea_id",$request->idea_id)->where("user_id",$request->user()->id)->first();
 
 
         if($already_vote){
-            $vote = $this->voteRepository->update($already_vote->id, [...$request->all(),"user_id" => 1]);
+            $vote = $this->voteRepository->update($already_vote->id, [...$request->all(),"user_id" => $request->user()->id]);
         }else{
             $vote = $this->voteRepository->create([...$request->all(),"user_id" => 1]);
         }
@@ -92,7 +94,11 @@ class VoteController extends Controller
             ], 404);
         }
 
-        $vote = $this->voteRepository->destroy($id);
+        $vote = $this->voteRepository->find($id);
+
+        $this->authorize("delete",$vote);
+
+        $this->voteRepository->destroy($id);
         return response()->json(['message' => 'Vote deleted successfully.']);
     }
 }

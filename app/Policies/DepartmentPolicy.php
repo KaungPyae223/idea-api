@@ -27,9 +27,9 @@ class DepartmentPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function checkRole(User $user): bool
     {
-        return false;
+        return $user->permissions->contains('permission', "Manage Department");
     }
 
     /**

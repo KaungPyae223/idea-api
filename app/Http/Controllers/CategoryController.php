@@ -8,6 +8,8 @@ use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 
 class CategoryController extends Controller
 {
@@ -15,6 +17,7 @@ class CategoryController extends Controller
      * Display a listing of the resource.
      */
 
+    use AuthorizesRequests;
     protected $categoryRepository;
 
     public function __construct(CategoryRepository $categoryRepository)
@@ -55,6 +58,7 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
+        $this->authorize("checkRole");
         $category = $this->categoryRepository->create($request->all());
         return response()->json(['message' => 'Category created successfully.', 'category' => new CategoryResource($category)], 201);
     }
@@ -87,6 +91,10 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, $id)
     {
+
+        $this->authorize("checkRole");
+
+
         $checkID = $this->checkID($id);
 
         if($checkID){
@@ -102,6 +110,9 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
+
+        $this->authorize("checkRole");
+
         $checkID = $this->checkID($id);
 
         if($checkID){

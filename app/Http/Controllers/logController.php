@@ -6,12 +6,16 @@ use App\Http\Resources\LogResource;
 use App\Models\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class logController extends Controller
 {
 
+    use AuthorizesRequests;
+
     public function viewLog (Request $request) {
 
+        $this->authorize("viewAny");
 
         $searchUser = $request->input("user");
         $searchType = $request->input("type");
@@ -50,6 +54,8 @@ class logController extends Controller
                 'message' => 'Invalid user ID'
             ], 404);
         }
+
+        $this->authorize("view",$id);
 
         $logs = Log::query()->where("user_id",$id)->paginate(20);
 

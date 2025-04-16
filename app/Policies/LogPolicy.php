@@ -2,26 +2,27 @@
 
 namespace App\Policies;
 
+use App\Models\Log;
 use App\Models\User;
-use App\Models\Vote;
 use Illuminate\Auth\Access\Response;
 
-class VotePolicy
+class LogPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->permissions->contains('permission', "View User Logs");
+
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Vote $vote): bool
+    public function view(User $user, $id): bool
     {
-        return false;
+        return $user->id === $id;
     }
 
     /**
@@ -35,7 +36,7 @@ class VotePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Vote $vote): bool
+    public function update(User $user, Log $log): bool
     {
         return false;
     }
@@ -43,15 +44,15 @@ class VotePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Vote $vote): bool
+    public function delete(User $user, Log $log): bool
     {
-        return $vote->user_id === $user->id;
+        return false;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Vote $vote): bool
+    public function restore(User $user, Log $log): bool
     {
         return false;
     }
@@ -59,7 +60,7 @@ class VotePolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Vote $vote): bool
+    public function forceDelete(User $user, Log $log): bool
     {
         return false;
     }

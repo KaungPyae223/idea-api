@@ -16,6 +16,8 @@ class PermissionSeeder extends Seeder
         DB::table('permissions')->insert([
             ['permission' => 'Create User'],
             ['permission' => 'Update User'],
+            ['permission' => 'Reset Password'],
+            ['permission' => 'Manage Department'],
             ['permission' => 'View User Logs'],
             ['permission' => 'Manage System Setting'],
             ['permission' => 'Remove Idea'],

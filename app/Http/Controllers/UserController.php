@@ -12,13 +12,14 @@ use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-
+    use AuthorizesRequests;
     protected $userRepository;
 
     public function __construct(UserRepository $userRepository)
@@ -100,6 +101,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
 
+        $this->authorize("create");
 
         $checkRole = $this->checkRole($request->role_id);
 
@@ -122,6 +124,9 @@ class UserController extends Controller
 
     public function userIdeas(Request $request, $id)
     {
+
+        $this->authorize("userSelectIdea",$id);
+
         $checkID = $this->checkID($id);
 
         if ($checkID) {
@@ -154,6 +159,41 @@ class UserController extends Controller
         return IdeaResource::collection($ideas);
     }
 
+    public function userIdeasByAdmin(Request $request, $id)
+    {
+        $checkID = $this->checkID($id);
+
+        if ($checkID) {
+            return $checkID;
+        }
+
+        $user = $this->userRepository->find($id);
+
+        $systemSettingID = SystemSetting::query()->orderBy("id", "desc")->first()->id;
+
+        if ($request->input("systemSettingID")) {
+
+            $systemSettingID = $request->input("systemSettingID");
+
+            $validated = Validator::make(['id' => $systemSettingID], [
+                'id' => 'required|integer|exists:system_settings,id',
+            ]);
+
+            if ($validated->fails()) {
+                return response()->json([
+                    'message' => 'Invalid system setting ID'
+                ], 404);
+            }
+        }
+
+        $ideas = $user->ideas()
+            ->where("system_setting_id", $systemSettingID)
+            ->where("is_anonymous",false)
+            ->paginate(5);
+
+        return IdeaResource::collection($ideas);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -165,13 +205,15 @@ class UserController extends Controller
             return $checkID;
         }
 
-        $department = $this->userRepository->find($id);
+        $user = $this->userRepository->find($id);
 
-        return new UserResource($department);
+        return new UserResource($user);
     }
 
     public function restartPassword($id)
     {
+
+        $this->authorize("resetPassword");
 
         $checkID = $this->checkID($id);
 
@@ -206,11 +248,15 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, string $id)
     {
 
+        $this->authorize("update");
+
         $checkID = $this->checkID($id);
 
         if ($checkID) {
             return $checkID;
         }
+
+
 
         $checkRole = $this->checkRole($request->role_id);
 
