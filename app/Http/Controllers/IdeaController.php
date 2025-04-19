@@ -111,7 +111,7 @@ class IdeaController extends Controller
             $ideas->orderBy("id", "desc");
         }
 
-        $ideas = $ideas->paginate(5);
+        $ideas = $ideas->paginate(6);
 
         return IdeaResource::collection($ideas);
     }
@@ -145,7 +145,7 @@ class IdeaController extends Controller
             return $q->where('QACoordinatorID',$user_id);
         });
 
-        $ideas = $ideaToSubmit->paginate(5);
+        $ideas = $ideaToSubmit->paginate(6);
 
         return IdeaResource::collection($ideas);
     }

@@ -154,7 +154,7 @@ class UserController extends Controller
 
         $ideas = $user->ideas()
             ->where("system_setting_id", $systemSettingID)
-            ->paginate(5);
+            ->paginate(6);
 
         return IdeaResource::collection($ideas);
     }
@@ -189,7 +189,7 @@ class UserController extends Controller
         $ideas = $user->ideas()
             ->where("system_setting_id", $systemSettingID)
             ->where("is_anonymous",false)
-            ->paginate(5);
+            ->paginate(6);
 
         return IdeaResource::collection($ideas);
     }
