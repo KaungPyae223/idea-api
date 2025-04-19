@@ -30,7 +30,7 @@ class CommentMail extends Mailable
      */
     public function envelope(): Envelope
     {
-        
+
         return new Envelope(
             subject: 'You Have Received Comment',
         );
@@ -48,6 +48,13 @@ class CommentMail extends Mailable
 
         return new Content(
             view: 'mail.ReceiveComment',
+            with: [
+                'ideaTitle' => $this->comment->idea->title,
+                'commentDate' => $commentDate,
+                'commentAuthor' => $this->comment->user->name,
+                'commentText' => $this->comment,
+                'ideaUrl' => 'www.idea.com'
+            ],
         );
     }
 

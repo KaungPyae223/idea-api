@@ -53,7 +53,7 @@ class PostIdeaMail extends Mailable
                 'postedBy' => $postedBy,
                 'postedDate' => $postedDate,
                 'ideaContent' => $idea->content,
-                'ideaUrl' => 'abcd'
+                'ideaUrl' => 'www.idea.com'
             ],
         );
     }

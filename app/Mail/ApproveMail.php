@@ -54,7 +54,7 @@ class ApproveMail extends Mailable
                 'postedBy' => $postedBy,
                 'approvedDate' => $approveDate,
                 'ideaContent' => $idea->content,
-                'ideaUrl' => 'abcd'
+                'ideaUrl' => 'www.idea.com'
             ],
         );
     }

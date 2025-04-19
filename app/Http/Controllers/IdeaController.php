@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateIdeaCategoryRequest;
 use App\Http\Requests\UpdateIdeaRequest;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\IdeaResource;
+use App\Mail\ApproveMail;
+use App\Mail\PostIdeaMail;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Idea;
 use App\Models\SystemSetting;
@@ -187,7 +189,7 @@ class IdeaController extends Controller
 
         $idea = $this->ideaRepository->create([...$request->all(), 'is_enabled' => false, 'user_id' => $user->id, 'system_setting_id' => $activeSystemSetting->id]);
 
-        // Mail::to($user->email)->send(new PostIdeaMail($idea));
+        Mail::to($user->department->user->email)->send(new PostIdeaMail($idea));
 
         return response()->json(['message' => 'Idea created successfully.', 'idea' => new IdeaResource($idea)], 201);
     }
@@ -317,7 +319,7 @@ class IdeaController extends Controller
 
         if($idea->is_enabled){
 
-            // Mail::to($idea->user->email)->send(new ApproveMail($idea));
+            Mail::to($idea->user->email)->send(new ApproveMail($idea));
 
         }
 

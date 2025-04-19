@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Resources\CommentResource;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use App\Mail\CommentMail;
 use App\Models\Comment;
 use App\Repositories\CommentRepository;
 use App\Repositories\IdeaRepository;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Mail;
 
 class CommentController extends Controller
 {
@@ -62,7 +64,7 @@ class CommentController extends Controller
     public function store(StoreCommentRequest $request)
     {
 
-        $this->authorize("create");
+        $this->authorize("create",Comment::class);
 
         $checkIdeaFinalClosureDate = $this->ideaRepository->find($request->idea_id);
 
@@ -72,7 +74,12 @@ class CommentController extends Controller
             ], 409);
         }
 
+
         $comment = $this->commentRepository->create([...$request->all(),"user_id" => $request->user()->id]);
+
+        Mail::to($comment->idea->user_id)->send(new CommentMail($comment));
+
+
         return response()->json(['message' => 'Comment created successfully.', 'comment' => new CommentResource($comment)], 201);
     }
 
