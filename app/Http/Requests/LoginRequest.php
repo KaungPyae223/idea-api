@@ -24,6 +24,8 @@ class LoginRequest extends FormRequest
         return [
             'email' => 'required|email',
             'password' => 'required|string',
+            'browser' => 'required|string',
+            'ip_address' => 'required|string',
         ];
     }
 }

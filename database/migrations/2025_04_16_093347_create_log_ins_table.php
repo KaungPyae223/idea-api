@@ -11,18 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ideas', function (Blueprint $table) {
+        Schema::create('log_ins', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("user_id");
-            $table->string("title");
-            $table->longText("content");
-            $table->boolean("is_anonymous");
-            $table->boolean("is_enabled");
-            $table->unsignedBigInteger("system_setting_id");
-            $table->boolean("hidden")->default(false);
+            $table->longText("browser");
+            $table->longText("ip_address");
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
         });
     }
 
@@ -31,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ideas');
+        Schema::dropIfExists('log_ins');
     }
 };

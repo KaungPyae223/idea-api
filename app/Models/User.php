@@ -24,6 +24,7 @@ class User extends Authenticatable
         'email',
         'department_id',
         'password',
+        'hidden'
     ];
 
     /**
@@ -54,9 +55,15 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class,"user_roles","user_id","role_id","id","id");
     }
 
+    
+
     public function permissions()
     {
         return $this->belongsToMany(Permission::class,"user_permissions","user_id","permission_id","id","id");
+    }
+
+    public function logIn(){
+        return $this->hasMany(LogIn::class,"user_id","id");
     }
 
     public function department()

@@ -58,7 +58,7 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $this->authorize("checkRole");
+        $this->authorize("checkRole",Category::class);
         $category = $this->categoryRepository->create($request->all());
         return response()->json(['message' => 'Category created successfully.', 'category' => new CategoryResource($category)], 201);
     }
@@ -92,7 +92,7 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, $id)
     {
 
-        $this->authorize("checkRole");
+        $this->authorize("checkRole",Category::class);
 
 
         $checkID = $this->checkID($id);
@@ -111,7 +111,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
 
-        $this->authorize("checkRole");
+        $this->authorize("checkRole",Category::class);
 
         $checkID = $this->checkID($id);
 

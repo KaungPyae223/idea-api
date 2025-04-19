@@ -96,7 +96,7 @@ class VoteController extends Controller
 
         $vote = $this->voteRepository->find($id);
 
-        $this->authorize("delete",$vote);
+        $this->authorize("delete",$vote,Vote::class);
 
         $this->voteRepository->destroy($id);
         return response()->json(['message' => 'Vote deleted successfully.']);

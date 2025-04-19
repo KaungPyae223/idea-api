@@ -101,7 +101,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
 
-        $this->authorize("create");
+        $this->authorize("create",User::class);
 
         $checkRole = $this->checkRole($request->role_id);
 
@@ -125,7 +125,7 @@ class UserController extends Controller
     public function userIdeas(Request $request, $id)
     {
 
-        $this->authorize("userSelectIdea",$id);
+        $this->authorize("userSelectIdea",$id,User::class);
 
         $checkID = $this->checkID($id);
 
@@ -154,7 +154,7 @@ class UserController extends Controller
 
         $ideas = $user->ideas()
             ->where("system_setting_id", $systemSettingID)
-            ->paginate(5);
+            ->paginate(6);
 
         return IdeaResource::collection($ideas);
     }
@@ -189,7 +189,7 @@ class UserController extends Controller
         $ideas = $user->ideas()
             ->where("system_setting_id", $systemSettingID)
             ->where("is_anonymous",false)
-            ->paginate(5);
+            ->paginate(6);
 
         return IdeaResource::collection($ideas);
     }
@@ -210,10 +210,26 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
+    public function getLogInData($id){
+
+        $checkID = $this->checkID($id);
+
+        if ($checkID) {
+            return $checkID;
+        }
+
+        $user = $this->userRepository->find($id);
+
+        $logInActivities = $user->logIn;
+
+        return response()->json($logInActivities);
+
+    }
+
     public function restartPassword($id)
     {
 
-        $this->authorize("resetPassword");
+        $this->authorize("resetPassword",User::class);
 
         $checkID = $this->checkID($id);
 
@@ -248,7 +264,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, string $id)
     {
 
-        $this->authorize("update");
+        $this->authorize("update",User::class);
 
         $checkID = $this->checkID($id);
 

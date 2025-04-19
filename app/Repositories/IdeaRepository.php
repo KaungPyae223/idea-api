@@ -208,6 +208,8 @@ class IdeaRepository extends BasicFunctions
 
             $idea->files()->delete();
 
+            $idea->reports()->delete();
+
             $idea->delete();
 
             DB::commit();

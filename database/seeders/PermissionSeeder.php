@@ -24,9 +24,10 @@ class PermissionSeeder extends Seeder
             ['permission' => 'Remove Comments'],
             ['permission' => 'Manage Category'],
             ['permission' => 'Reports'],
-            ['permission' => 'Idea Submission'],
             ['permission' => 'Create Idea'],
             ['permission' => 'Create Comment'],
+            ['permission' => 'Banned User'],
+            ['permission' => 'Hide Ideas']
 
         ]);
     }
