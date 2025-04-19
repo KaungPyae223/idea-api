@@ -50,7 +50,8 @@ class IdeaPolicy
      */
     public function delete(User $user, Idea $idea): bool
     {
-        return $idea->user->department->QACoordinatorID === $user->id || $idea->user_id === $user->id;
+
+        return $idea->user->department->QACoordinatorID === $user->id || $idea->user_id === $user->id || $user->permissions->contains('permission', "Remove Idea");
     }
 
     public function updateCategory(User $user,Idea $idea): bool
