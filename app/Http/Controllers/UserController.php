@@ -101,7 +101,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
 
-        $this->authorize("create");
+        $this->authorize("create",User::class);
 
         $checkRole = $this->checkRole($request->role_id);
 
@@ -125,7 +125,7 @@ class UserController extends Controller
     public function userIdeas(Request $request, $id)
     {
 
-        $this->authorize("userSelectIdea",$id);
+        $this->authorize("userSelectIdea",$id,User::class);
 
         $checkID = $this->checkID($id);
 
@@ -229,7 +229,7 @@ class UserController extends Controller
     public function restartPassword($id)
     {
 
-        $this->authorize("resetPassword");
+        $this->authorize("resetPassword",User::class);
 
         $checkID = $this->checkID($id);
 
@@ -264,7 +264,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, string $id)
     {
 
-        $this->authorize("update");
+        $this->authorize("update",User::class);
 
         $checkID = $this->checkID($id);
 

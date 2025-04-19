@@ -15,7 +15,7 @@ class logController extends Controller
 
     public function viewLog (Request $request) {
 
-        $this->authorize("viewAny");
+        $this->authorize("viewAny",Log::class);
 
         $searchUser = $request->input("user");
         $searchType = $request->input("type");
@@ -55,7 +55,7 @@ class logController extends Controller
             ], 404);
         }
 
-        $this->authorize("view",$id);
+        $this->authorize("view",$id,Log::class);
 
         $logs = Log::query()->where("user_id",$id)->paginate(20);
 

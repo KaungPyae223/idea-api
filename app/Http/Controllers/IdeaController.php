@@ -103,7 +103,9 @@ class IdeaController extends Controller
             });
         }
 
-        $ideas->where("is_enabled", true);
+        $ideas->where("is_enabled", true)->where("hidden",false);
+
+
 
         if ($latestQuery) {
             $ideas->orderBy("id", "desc");
@@ -115,6 +117,7 @@ class IdeaController extends Controller
     }
 
     public function ideaComments($id){
+
         $checkID = $this->checkID($id);
 
         if($checkID){
@@ -154,7 +157,7 @@ class IdeaController extends Controller
     {
 
 
-        $this->authorize("create");
+        $this->authorize("create",Idea::class);
 
         $activeSystemSetting = SystemSetting::query()->where("status", true)->first();
         $currentDate = now();
@@ -230,9 +233,8 @@ class IdeaController extends Controller
         $idea = $this->ideaRepository->find($id);
 
 
-        $this->authorize('update', $idea);
+        $this->authorize('update', $idea,Idea::class);
 
-        // check idea is over is over idea closure date or not.
 
         $checkIdeaClosureDate = $this->ideaRepository->find($id);
         $ideaClosureDate = Carbon::parse($checkIdeaClosureDate->SystemSetting->idea_closure_date);
@@ -268,7 +270,7 @@ class IdeaController extends Controller
 
         $idea = $this->ideaRepository->find($id);
 
-        $this->authorize("updateCategory",$idea);
+        $this->authorize("updateCategory",$idea,Idea::class);
 
         // check idea is over is over idea closure date or not.
 
@@ -303,7 +305,7 @@ class IdeaController extends Controller
 
         $idea = $this->ideaRepository->find($id);
 
-        $this->authorize("submitIdea",$idea);
+        $this->authorize("submitIdea",$idea,Idea::class);
 
         $checkID = $this->checkID($id);
 
@@ -336,7 +338,7 @@ class IdeaController extends Controller
 
         $idea = $this->ideaRepository->find($id);
 
-        $this->authorize("delete",$idea);
+        $this->authorize("delete",$idea,Idea::class);
 
         $idea = $this->ideaRepository->destroy($id);
 

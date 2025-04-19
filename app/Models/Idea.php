@@ -16,7 +16,8 @@ class Idea extends Model
         'content',
         'is_anonymous',
         'is_enabled',
-        'system_setting_id'
+        'system_setting_id',
+        'hidden'
     ];
 
     public function categories () {
@@ -29,6 +30,10 @@ class Idea extends Model
 
     public function user() {
         return $this->belongsTo(User::class,"user_id","id");
+    }
+
+    public function reports(){
+        return $this->hasMany(Report::class,"idea_id","id");
     }
 
     public function comment() {

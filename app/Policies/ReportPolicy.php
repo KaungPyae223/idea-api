@@ -16,6 +16,21 @@ class ReportPolicy
         return false;
     }
 
+    public function isHideUser(User $user): bool
+    {
+        return $user->permissions->contains('permission', "Hide Ideas");
+    }
+
+    public function bannedUser(User $user): bool
+    {
+        return $user->permissions->contains('permission', "Banned User");
+    }
+
+    public function checkRole(User $user): bool
+    {
+        return $user->roles>contains('role', "QA Manager");
+    }
+
     /**
      * Determine whether the user can view the model.
      */

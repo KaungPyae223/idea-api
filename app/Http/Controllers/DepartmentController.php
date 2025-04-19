@@ -41,22 +41,7 @@ class DepartmentController extends Controller
         return null;
     }
 
-    protected function CheckQACoordiantor($id){
 
-        $userRepository = new UserRepository;
-
-        $user = $userRepository->find($id);
-
-        if($user->roles->role !== "QA Coordinators"){
-
-            return response()->json([
-                'message' => 'The selected user is not QA Coordinators'
-            ], 404);
-
-        }
-
-        return null;
-    }
 
     public function index()
     {
@@ -80,16 +65,9 @@ class DepartmentController extends Controller
     public function store(StoreDepartmentRequest $request)
     {
 
-        $this->authorize('checkRole');
-
-        $checkUserRole = $this->CheckQACoordiantor($request->QACoordinatorID);
-
-        if($checkUserRole){
-            return $checkUserRole;
-        }
+        $this->authorize('checkRole',Department::class);
 
         $department = $this->departmentRepository->create($request->all());
-
 
 
         return response()->json(['message' => 'Department created successfully.', 'department' => new DepartmentResource($department)], 201);
@@ -101,8 +79,7 @@ class DepartmentController extends Controller
     public function show($id)
     {
 
-        $this->authorize('checkRole');
-
+        $this->authorize('checkRole',Department::class);
 
         $checkID = $this->checkID($id);
 
@@ -117,7 +94,7 @@ class DepartmentController extends Controller
 
     public function departmentUsers($id){
 
-        $this->authorize('checkRole');
+        $this->authorize('checkRole',Department::class);
 
 
         $checkID = $this->checkID($id);
@@ -148,19 +125,12 @@ class DepartmentController extends Controller
     public function update(UpdateDepartmentRequest $request, $id)
     {
 
-        $this->authorize('checkRole');
-
+        $this->authorize('checkRole',Department::class);
 
         $checkID = $this->checkID($id);
 
         if($checkID){
             return $checkID;
-        }
-
-        $checkUserRole = $this->CheckQACoordiantor($request->QACoordinatorID);
-
-        if($checkUserRole){
-            return $checkUserRole;
         }
 
         $department = $this->departmentRepository->update($id, $request->all());
@@ -174,7 +144,7 @@ class DepartmentController extends Controller
     public function destroy($id)
     {
 
-        $this->authorize('checkRole');
+        $this->authorize('checkRole',Department::class);
 
         $checkID = $this->checkID($id);
 
