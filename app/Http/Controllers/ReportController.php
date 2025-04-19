@@ -65,7 +65,7 @@ class ReportController extends Controller
     public function reportIdea()
     {
 
-        $this->authorize("checkRole",Report::class);
+        $this->authorize("checkRole", Report::class);
 
         $idea = Idea::has("reports")->paginate(6);
 
@@ -75,7 +75,7 @@ class ReportController extends Controller
     public function reportIdeaDetails($id)
     {
 
-        $this->authorize("checkRole",Report::class);
+        $this->authorize("checkRole", Report::class);
 
 
         $checkID = $this->checkID($id);
@@ -99,7 +99,7 @@ class ReportController extends Controller
     public function hideIdea(HideIdeaRequest $request, $id)
     {
 
-        $this->authorize("isHideUser",Report::class);
+        $this->authorize("isHideUser", Report::class);
 
 
         $checkID = $this->checkID($id);
@@ -127,7 +127,7 @@ class ReportController extends Controller
     public function getAllHideIdeas()
     {
 
-        $this->authorize("isHideUser",Report::class);
+        $this->authorize("isHideUser", Report::class);
 
 
         $idea = Idea::query()->where("hidden", true)->paginate(6);
@@ -140,7 +140,7 @@ class ReportController extends Controller
     public function hideAllUserPosts(HideIdeaRequest $request, $id)
     {
 
-        $this->authorize("isHideUser",Report::class);
+        $this->authorize("isHideUser", Report::class);
 
         $checkUserId = $this->checkUserID($id);
 
@@ -168,7 +168,7 @@ class ReportController extends Controller
 
     public function getHideIdeaUser()
     {
-        $this->authorize("isHideUser",Report::class);
+        $this->authorize("isHideUser", Report::class);
 
 
         $user = User::query()->where("hidden", true)->paginate(10);
@@ -179,7 +179,7 @@ class ReportController extends Controller
     public function removePostCommentPermission($id)
     {
 
-        $this->authorize("bannedUser",Report::class);
+        $this->authorize("bannedUser", Report::class);
 
 
         $checkUserId = $this->checkUserID($id);
@@ -200,7 +200,7 @@ class ReportController extends Controller
     public function givePostCommentPermission($id)
     {
 
-        $this->authorize("bannedUser",Report::class);
+        $this->authorize("bannedUser", Report::class);
 
 
         $checkUserId = $this->checkUserID($id);
@@ -226,9 +226,10 @@ class ReportController extends Controller
         ]);
     }
 
-    public function getBanUser(){
+    public function getBanUser()
+    {
 
-        $this->authorize("bannedUser",Report::class);
+        $this->authorize("bannedUser", Report::class);
 
 
         $usersWithoutPermissions = User::whereDoesntHave('permissions', function ($query) {
@@ -236,7 +237,6 @@ class ReportController extends Controller
         })->paginate(10);
 
         return response()->json($usersWithoutPermissions);
-
     }
 
     public function reportedUser()
@@ -278,10 +278,13 @@ class ReportController extends Controller
     public function store(StoreReportRequest $request)
     {
 
-        $userReported = Report::query()->where("user_id",$request->user()->id)->where("idea_id",$request->idea_id)->exit();
+        $userReported = Report::query()
+            ->where("user_id", $request->user()->id)
+            ->where("idea_id", $request->idea_id)
+            ->exists();
 
-        if($userReported){
-            return response()->json(["message" => "User have already reported this idea"]);
+        if ($userReported) {
+            return response()->json(["message" => "User has already reported this idea"], 409);
         }
 
         $report = $this->model->create([...$request->all(), "user_id" => $request->user()->id]);
