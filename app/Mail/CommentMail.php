@@ -52,7 +52,7 @@ class CommentMail extends Mailable
                 'ideaTitle' => $this->comment->idea->title,
                 'commentDate' => $commentDate,
                 'commentAuthor' => $this->comment->user->name,
-                'commentText' => $this->comment,
+                'commentText' => $this->comment->comment,
                 'ideaUrl' => 'www.idea.com'
             ],
         );

@@ -77,7 +77,8 @@ class CommentController extends Controller
 
         $comment = $this->commentRepository->create([...$request->all(),"user_id" => $request->user()->id]);
 
-        Mail::to($comment->idea->user_id)->send(new CommentMail($comment));
+
+        // Mail::to($comment->idea->user->email)->send(new CommentMail($comment));
 
 
         return response()->json(['message' => 'Comment created successfully.', 'comment' => new CommentResource($comment)], 201);
