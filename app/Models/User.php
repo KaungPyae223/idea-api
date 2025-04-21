@@ -55,7 +55,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class,"user_roles","user_id","role_id","id","id");
     }
 
-    
+
 
     public function permissions()
     {
@@ -74,6 +74,16 @@ class User extends Authenticatable
     public function ideas()
     {
         return $this->hasMany(Idea::class,"user_id","id");
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class,"user_id","id");
+    }
+
+    public function logins()
+    {
+        return $this->hasMany(LogIn::class,"user_id","id");
     }
 
 }

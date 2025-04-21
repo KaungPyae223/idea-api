@@ -11,6 +11,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Idea;
 use App\Models\Report;
 use App\Models\User;
+use App\Repositories\ReportRepository ;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -22,8 +23,15 @@ class ReportController extends Controller
      */
 
     protected $model;
+    protected $reportRepository;
     use AuthorizesRequests;
 
+
+    public function __construct(ReportRepository $reportRepository)
+    {
+        $this->model = new Report();
+        $this->reportRepository = $reportRepository;
+    }
 
     protected function checkID($id)
     {
@@ -55,10 +63,7 @@ class ReportController extends Controller
         return null;
     }
 
-    public function __construct()
-    {
-        $this->model = new Report();
-    }
+
 
     public function index() {}
 
@@ -108,20 +113,10 @@ class ReportController extends Controller
             return $checkID;
         }
 
-        $idea = Idea::find($id);
+        $hide = $this->reportRepository->hideIdea($id,$request->hide);
 
-        $idea->hidden = $request->hide;
+        return response()->json(["message"=>$hide]);
 
-        $idea->update();
-
-        if ($request->hide) {
-            return response()->json([
-                "message" => "successfully hide idea"
-            ]);
-        }
-        return response()->json([
-            "message" => "successfully unhide idea"
-        ]);
     }
 
     public function getAllHideIdeas()
@@ -150,20 +145,10 @@ class ReportController extends Controller
 
         $hide = $request->hide;
 
-        $user = User::find($id);
+        $hide = $this->reportRepository->hideAllUserPosts($id,$hide);
 
-        $user->ideas()->update(['hidden' => $hide]);
+        return response()->json($hide);
 
-        $user->update(['hidden' => $hide]);
-
-        if ($request->hide) {
-            return response()->json([
-                "message" => "successfully hide user idea"
-            ]);
-        }
-        return response()->json([
-            "message" => "successfully unhide user idea"
-        ]);
     }
 
     public function getHideIdeaUser()
@@ -188,13 +173,11 @@ class ReportController extends Controller
             return $checkUserId;
         }
 
-        $user = User::find($id);
+        $ban = $this->reportRepository->banAndAccess($id,true);
 
-        $user->permissions()->detach([12, 13]);
+        return response()->json(["message"=>$ban]);
 
-        return response()->json([
-            "message" => "successfully remove user's post idea and comment permission"
-        ]);
+
     }
 
     public function givePostCommentPermission($id)
@@ -209,21 +192,10 @@ class ReportController extends Controller
             return $checkUserId;
         }
 
-        $user = User::find($id);
+        $ban = $this->reportRepository->banAndAccess($id,false);
 
-        $targetPermissions = [12, 13];
+        return response()->json(["message"=>$ban]);
 
-        $existingPermissions = $user->permissions()->pluck('permission_id')->toArray();
-
-        $permissionsToAttach = array_diff($targetPermissions, $existingPermissions);
-
-        if (!empty($permissionsToAttach)) {
-            $user->permissions()->attach($permissionsToAttach);
-        }
-
-        return response()->json([
-            "message" => "successfully add user's post idea and comment permission"
-        ]);
     }
 
     public function getBanUser()

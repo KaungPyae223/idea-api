@@ -21,6 +21,8 @@ class IdeaRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->ideaRepository = new IdeaRepository();
+        $this->actingAs(User::factory()->create());
+
     }
 
     public function test_find_idea()
@@ -84,6 +86,8 @@ class IdeaRepositoryTest extends TestCase
 
         $data = ['category' => $category->id];
 
+
+
         $this->ideaRepository->updateIdeaCategory($idea->id, $data);
 
         $this->assertDatabaseHas('category_ideas', [
@@ -98,6 +102,8 @@ class IdeaRepositoryTest extends TestCase
 
         $idea = Idea::factory()->create(['is_enabled' => false]);
 
+
+
         $updatedIdea = $this->ideaRepository->submitIdea($idea->id, ['is_enabled' => true]);
 
 
@@ -109,6 +115,8 @@ class IdeaRepositoryTest extends TestCase
 
         $idea = Idea::factory()->create();
         $file = File::factory()->create(['idea_id' => $idea->id]);
+
+
 
         $this->ideaRepository->destroy($idea->id);
 

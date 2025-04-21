@@ -128,7 +128,7 @@ class IdeaController extends Controller
 
         $ideas = $this->ideaRepository->find($id);
 
-        $comments = $ideas->comment;
+        $comments = $ideas->comment()->where("hidden",false)->get();
 
         return CommentResource::collection($comments);
 

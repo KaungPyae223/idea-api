@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\SystemSetting;
+use App\Models\User;
 use App\Repositories\SystemSettingRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -18,6 +19,8 @@ class SystemSettingRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->systemSettingRepository = new SystemSettingRepository();
+        $this->actingAs(User::factory()->create());
+
     }
 
     public function test_find_system_setting()
@@ -39,8 +42,10 @@ class SystemSettingRepositoryTest extends TestCase
             "academic_year" => "2024-2025",
             "idea_closure_date" => now()->addDays(10),
             "final_closure_date" => now()->addDays(20),
-            "status" => false
+            "status" => true
         ];
+
+
 
         $systemSetting = $this->systemSettingRepository->create($data);
 
@@ -63,6 +68,8 @@ class SystemSettingRepositoryTest extends TestCase
             "final_closure_date" => now()->addDays(20),
         ];
 
+        
+
         $updatedSetting = $this->systemSettingRepository->update($systemSetting->id, $updatedData);
 
         $this->assertEquals('2024-2025', $updatedSetting->fresh()->academic_year);
@@ -73,6 +80,8 @@ class SystemSettingRepositoryTest extends TestCase
     {
 
         $systemSetting = SystemSetting::factory()->create();
+
+
 
         $this->systemSettingRepository->destroy($systemSetting->id);
 

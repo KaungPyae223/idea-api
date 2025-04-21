@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Department;
+use App\Models\User;
 use App\Repositories\DepartmentRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -18,6 +19,8 @@ class DepartmentRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->departmentRepository = new DepartmentRepository(new Department());
+        $this->actingAs(User::factory()->create());
+    
     }
 
     public function test_find_department()
@@ -35,6 +38,8 @@ class DepartmentRepositoryTest extends TestCase
     {
         $data = ['department_name' => 'Finance Department',"QACoordinatorID" => 1];
 
+
+
         $department = $this->departmentRepository->create($data);
 
         $this->assertInstanceOf(Department::class, $department);
@@ -45,6 +50,8 @@ class DepartmentRepositoryTest extends TestCase
     {
 
         $department = Department::factory()->create(['department_name' => 'Old Name',"QACoordinatorID" => 1]);
+
+
 
         $updatedDepartment = $this->departmentRepository->update($department->id, ['department_name' => 'New Name',"QACoordinatorID" => 1]);
 
@@ -57,6 +64,8 @@ class DepartmentRepositoryTest extends TestCase
     {
 
         $department = Department::factory()->create();
+
+
 
         $result = $this->departmentRepository->destroy($department->id);
 

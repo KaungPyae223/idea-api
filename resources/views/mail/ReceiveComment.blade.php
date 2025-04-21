@@ -10,7 +10,7 @@
             padding: 20px;
         }
         .container {
-        	max-width: 800px;
+        	max-width: Auth::id()0px;
             background: white;
             padding: 20px;
             border-radius: 8px;

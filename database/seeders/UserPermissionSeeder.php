@@ -18,6 +18,7 @@ class UserPermissionSeeder extends Seeder
             ['user_id' => 1, 'permission_id' => 2],
             ['user_id' => 1, 'permission_id' => 3],
             ['user_id' => 1, 'permission_id' => 4],
+
             ['user_id' => 1, 'permission_id' => 10],
             ['user_id' => 1, 'permission_id' => 11],
             ['user_id' => 1, 'permission_id' => 12],

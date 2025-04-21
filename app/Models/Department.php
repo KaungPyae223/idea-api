@@ -20,4 +20,8 @@ class Department extends Model
         return $this->hasMany(User::class,"department_id","id");
     }
 
+    public function qaCoordinator(){
+        return $this->belongsTo(User::class,'QACoordinatorID',"id");
+    }
+
 }

@@ -14,6 +14,10 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+        $lastLogin = $this->logins()->latest()->first();
+        $user_browser = $lastLogin?->browser ?? null;
+
         return [
             "id" => $this->id,
             "name" => $this->name,
@@ -21,7 +25,8 @@ class UserResource extends JsonResource
             "photo" => $this->photo,
             "department" => $this->department?$this->department->department_name:null,
             "roles" => $this->roles->pluck('role')->toArray(),
-            "permissions" => $this->permissions->pluck('permission')->toArray()
+            "permissions" => $this->permissions->pluck('permission')->toArray(),
+            "browser_used" => $user_browser
         ];
     }
 }
