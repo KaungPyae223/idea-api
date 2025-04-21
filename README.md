@@ -3,23 +3,30 @@
 ## Base URL
 
 ```
-{{base_url}}  (Default: http://127.0.0.1:Auth::id()00/api/v1)
+{{base_url}}  (Default: http://127.0.0.1:8000/api/v1)
 ```
 
 ## Authentication
 
 ### Log In
-
 **Endpoint:** `POST /login`
+
 **Request Body:**
 | Parameter | Type | Description |
-|------------|--------|-------------|
+|----------|------|-------------|
 | email | string | User email |
 | password | string | User password |
+| browser | string | User browser |
+| ip_address | string | IP address |
 
 ### Reset Password
-
 **Endpoint:** `POST /users/reset-password/{id}`
+
+### Log In Activities
+**Endpoint:** `GET /log-in-activities/{id}`
+
+### Change Password
+**Endpoint:** `PUT /change-password`
 
 ---
 
@@ -28,6 +35,7 @@
 ### Create Department
 
 **Endpoint:** `POST /departments`
+
 **Request Body:**
 | Parameter | Type | Description |
 |----------------|--------|-------------|
@@ -45,6 +53,7 @@
 ### Update Department
 
 **Endpoint:** `PUT /departments/{id}`
+
 **Request Body:**
 | Parameter | Type | Description |
 |----------------|--------|-------------|
@@ -70,6 +79,7 @@
 ### Create User
 
 **Endpoint:** `POST /users`
+
 **Request Body:**
 | Parameter | Type | Description |
 |---------------|--------|-------------|
@@ -83,6 +93,7 @@
 ### Update User
 
 **Endpoint:** `PUT /users/{id}`
+
 **Request Body:** (Same as Create User)
 
 ### Get User
@@ -96,9 +107,9 @@
 ### Get User Ideas
 
 **Endpoint:** `GET /users/getIdeas/{id}`
-**Query Parameters:**
 
--   `systemSettingID` (int) - System setting ID
+**Query Parameters:**
+- `systemSettingID` (int) - System setting ID
 
 ---
 
@@ -107,6 +118,7 @@
 ### Get All Ideas
 
 **Endpoint:** `GET /idea`
+
 **Query Parameters:**
 | Parameter | Type | Description |
 |------------|--------|-------------|
@@ -118,6 +130,7 @@
 ### Create Idea
 
 **Endpoint:** `POST /idea`
+
 **Request Body:**
 | Parameter | Type | Description |
 |----------------|--------|-------------|
@@ -130,14 +143,15 @@
 ### Update Idea
 
 **Endpoint:** `PUT /idea/{id}`
+
 **Request Body:** (Same as Create Idea)
 
 ### Submit Idea
 
 **Endpoint:** `PUT /idea/submit/{id}`
-**Request Body:**
 
--   `is_enabled` (bool) - Submit or unsubmit idea
+**Request Body:**
+- `is_enabled` (bool) - Submit or unsubmit idea
 
 ### Delete Idea
 
@@ -162,6 +176,7 @@
 ### Create Category
 
 **Endpoint:** `POST /categories`
+
 **Request Body:**
 | Parameter | Type | Description |
 |-----------|--------|-------------|
@@ -178,6 +193,7 @@
 ### Update Category
 
 **Endpoint:** `PUT /categories/{id}`
+
 **Request Body:**
 | Parameter | Type | Description |
 |-----------|--------|-------------|
@@ -194,6 +210,7 @@
 ### Create System Setting
 
 **Endpoint:** `POST /system-setting`
+
 **Request Body:**
 | Parameter | Type | Description |
 |-------------------|--------|-------------|
@@ -208,6 +225,7 @@
 ### Update System Setting
 
 **Endpoint:** `PUT /system-setting/{id}`
+
 **Request Body:** (Same as Create System Setting)
 
 ### Delete System Setting
@@ -225,6 +243,7 @@
 ### Create Comment
 
 **Endpoint:** `POST /comments`
+
 **Request Body:**
 | Parameter | Type | Description |
 |--------------|--------|-------------|
@@ -239,6 +258,7 @@
 ### Update Comment
 
 **Endpoint:** `PUT /comments/{id}`
+
 **Request Body:** (Same as Create Comment)
 
 ### Delete Comment
@@ -252,6 +272,7 @@
 ### Create Vote
 
 **Endpoint:** `POST /votes`
+
 **Request Body:**
 | Parameter | Type | Description |
 |-----------|--------|-------------|
@@ -269,6 +290,7 @@
 ### Get All Logs
 
 **Endpoint:** `GET /logs`
+
 **Query Parameters:**
 | Parameter | Type | Description |
 |-----------|--------|-------------|
@@ -286,4 +308,84 @@
 
 ---
 
+## Hidden Ideas
+
+### Hide Idea
+**Endpoint:** `PUT /hide/{id}`
+
+**Request Body:**
+| Parameter | Type | Description |
+|----------|------|-------------|
+| hide | int (0 or 1) | Hide or unhide the idea |
+
+### Get All Hidden Ideas
+**Endpoint:** `GET /get-hide-ideas`
+
+### Hide All User Ideas
+**Endpoint:** `PUT /user/hide/{id}`
+
+**Request Body:**
+| Parameter | Type | Description |
+|----------|------|-------------|
+| hide | int (0 or 1) | Hide or unhide all user ideas |
+
+### Get All Hidden Users
+**Endpoint:** `GET /get-hide-ideas-user`
+
+---
+
+## Idea Reports
+
+### Report an Idea
+**Endpoint:** `POST /report`
+
+**Request Body:**
+| Parameter | Type | Description |
+|----------|------|-------------|
+| idea_id | int | ID of the idea being reported |
+| reason | string | Reason for reporting |
+
+### Get All Reported Ideas
+**Endpoint:** `GET /report/ideas`
+
+### Get Report Details by Idea
+**Endpoint:** `GET /report/ideas/{id}`
+
+### Get Reported Users
+**Endpoint:** `GET /report/user`
+
+### Get Reports for a Specific User
+**Endpoint:** `GET /report/user/{id}`
+
+---
+
+## Idea Comment Permissions
+
+### Remove Comment/Idea Permissions
+**Endpoint:** `PUT /remove-idea-permissions/{id}`
+
+### Give Comment/Idea Permissions
+**Endpoint:** `PUT /give-idea-permissions/{id}`
+
+### Get All Banned Users
+**Endpoint:** `GET /banUser`
+
+---
+
+## Reports & Statistics
+
+### Get Active Users
+**Endpoint:** `GET /active-users`
+
+### Get Department Report
+**Endpoint:** `GET /department-report`
+
+### Get Anonymous Ideas
+**Endpoint:** `GET /anonymous-ideas`
+
+### Get Anonymous Comments
+**Endpoint:** `GET /anonymous-comments`
+
+
 This documentation provides an overview of all API endpoints and expected parameters. For more details, refer to the Postman collection.
+
