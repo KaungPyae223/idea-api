@@ -115,7 +115,7 @@ class ReportController extends Controller
 
         $hide = $this->reportRepository->hideIdea($id,$request->hide);
 
-        return $hide;
+        return response()->json(["message"=>$hide]);
 
     }
 
@@ -175,7 +175,8 @@ class ReportController extends Controller
 
         $ban = $this->reportRepository->banAndAccess($id,true);
 
-        return $ban;
+        return response()->json(["message"=>$ban]);
+
 
     }
 
@@ -193,7 +194,7 @@ class ReportController extends Controller
 
         $ban = $this->reportRepository->banAndAccess($id,false);
 
-        return $ban;
+        return response()->json(["message"=>$ban]);
 
     }
 
