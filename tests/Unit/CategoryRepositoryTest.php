@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Category;
+use App\Models\User;
 use App\Repositories\CategoryRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,8 @@ class CategoryRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->categoryRepository = new CategoryRepository();
+        $this->actingAs(User::factory()->create());
+
     }
 
     public function test_find_category()
@@ -33,6 +36,8 @@ class CategoryRepositoryTest extends TestCase
     public function test_create_category()
     {
 
+
+
         $data = ['name' => 'Test Category'];
         $category = $this->categoryRepository->create($data);
 
@@ -44,6 +49,9 @@ class CategoryRepositoryTest extends TestCase
     {
 
         $category = Category::factory()->create(['name' => 'Old Name']);
+
+
+
         $updatedCategory = $this->categoryRepository->update($category->id, ['name' => 'New Name']);
 
         $this->assertEquals('New Name', $updatedCategory->fresh()->name);
@@ -52,6 +60,8 @@ class CategoryRepositoryTest extends TestCase
     public function test_destroy_category()
     {
         $category = Category::factory()->create();
+
+
 
         $result = $this->categoryRepository->destroy($category->id);
 

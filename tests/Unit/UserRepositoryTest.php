@@ -21,6 +21,8 @@ class UserRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->userRepository = new UserRepository();
+        $this->actingAs(User::factory()->create());
+
     }
 
     public function test_create_user()
@@ -28,6 +30,8 @@ class UserRepositoryTest extends TestCase
         $department = Department::factory()->create();
         $role = Role::factory()->create();
         $permission = Permission::factory()->create();
+
+
 
         $userData = [
             'name' => 'Test User',
@@ -59,6 +63,9 @@ class UserRepositoryTest extends TestCase
         $department = Department::factory()->create();
         $role = Role::factory()->create();
         $permission = Permission::factory()->create();
+
+
+
 
         $updatedData = [
             'name' => 'Updated User',
