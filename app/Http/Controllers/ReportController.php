@@ -153,6 +153,8 @@ class ReportController extends Controller
         $user = User::find($id);
 
         $user->ideas()->update(['hidden' => $hide]);
+        $user->comments()->update(['hidden' => $hide]);
+
 
         $user->update(['hidden' => $hide]);
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\IdeaController;
 use App\Http\Controllers\logController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReportingController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SystemSettingController;
 use App\Http\Controllers\UserController;
@@ -75,6 +76,11 @@ Route::prefix("v1")->group(function () {
         Route::get('/report/ideas/{id}',[ReportController::class,'reportIdeaDetails']);
         Route::get('/report/ideas',[ReportController::class,'reportIdea']);
         Route::resource('/report',ReportController::class)->only(["store"]);
+
+        Route::get('/active-users',[ReportingController::class,'activeUser']);
+        Route::get('/department-report',[ReportingController::class,'departmentReport']);
+        Route::get('/anonymous-ideas',[ReportingController::class,'anonymousIdeas']);
+        Route::get('/anonymous-comments',[ReportingController::class,'anonymousComments']);
 
     });
 });

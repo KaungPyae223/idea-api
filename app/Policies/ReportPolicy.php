@@ -21,6 +21,11 @@ class ReportPolicy
         return $user->permissions->contains('permission', "Hide Ideas");
     }
 
+    public function viewReport(User $user): bool
+    {
+        return $user->permissions->contains('permission', "View Reports");
+    }
+
     public function bannedUser(User $user): bool
     {
         return $user->permissions->contains('permission', "Banned User");
