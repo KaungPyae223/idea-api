@@ -177,7 +177,6 @@ class ReportController extends Controller
 
         return response()->json(["message"=>$ban]);
 
-
     }
 
     public function givePostCommentPermission($id)

@@ -33,7 +33,7 @@ Route::prefix("v1")->group(function () {
 
         Route::get('roles', [RoleController::class, "index"]);
 
-        Route::get('user/getIdeasByAdmin/{id}', [UserController::class, "userIdeasByAdmin"]);
+        Route::get('users/userIdeasByAdmin/{id}', [UserController::class, "userIdeasByAdmin"]);
         Route::get('users/getIdeas/{id}', [UserController::class, "userIdeas"]);
         Route::post('users/reset-password/{id}', [UserController::class, "restartPassword"]);
         Route::apiResource('users', UserController::class)->except(["destroy"]);

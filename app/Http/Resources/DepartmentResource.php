@@ -17,8 +17,11 @@ class DepartmentResource extends JsonResource
         return [
             "id" => $this->id,
             "department_name" => $this->department_name,
-            "qa_coordinator" => $this->qaCoordinator->name,
+            "qa_coordinator_name" => $this->qaCoordinator->name,
             "total_user" => $this->user->count(),
+            "created_at" => $this->created_at,
+            "updated_at" => $this->updated_at,
+
         ];
     }
 }

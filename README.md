@@ -9,6 +9,7 @@
 ## Authentication
 
 ### Log In
+
 **Endpoint:** `POST /login`
 
 **Request Body:**
@@ -20,12 +21,15 @@
 | ip_address | string | IP address |
 
 ### Reset Password
+
 **Endpoint:** `POST /users/reset-password/{id}`
 
 ### Log In Activities
+
 **Endpoint:** `GET /log-in-activities/{id}`
 
 ### Change Password
+
 **Endpoint:** `PUT /change-password`
 
 ---
@@ -108,8 +112,13 @@
 
 **Endpoint:** `GET /users/getIdeas/{id}`
 
+### Get User Ideas By Admin
+
+**Endpoint:** `GET /users/userIdeasByAdmin/{id}`
+
 **Query Parameters:**
-- `systemSettingID` (int) - System setting ID
+
+-   `systemSettingID` (int) - System setting ID
 
 ---
 
@@ -151,7 +160,8 @@
 **Endpoint:** `PUT /idea/submit/{id}`
 
 **Request Body:**
-- `is_enabled` (bool) - Submit or unsubmit idea
+
+-   `is_enabled` (bool) - Submit or unsubmit idea
 
 ### Delete Idea
 
@@ -311,6 +321,7 @@
 ## Hidden Ideas
 
 ### Hide Idea
+
 **Endpoint:** `PUT /hide/{id}`
 
 **Request Body:**
@@ -319,9 +330,11 @@
 | hide | int (0 or 1) | Hide or unhide the idea |
 
 ### Get All Hidden Ideas
+
 **Endpoint:** `GET /get-hide-ideas`
 
 ### Hide All User Ideas
+
 **Endpoint:** `PUT /user/hide/{id}`
 
 **Request Body:**
@@ -330,6 +343,7 @@
 | hide | int (0 or 1) | Hide or unhide all user ideas |
 
 ### Get All Hidden Users
+
 **Endpoint:** `GET /get-hide-ideas-user`
 
 ---
@@ -337,6 +351,7 @@
 ## Idea Reports
 
 ### Report an Idea
+
 **Endpoint:** `POST /report`
 
 **Request Body:**
@@ -346,15 +361,19 @@
 | reason | string | Reason for reporting |
 
 ### Get All Reported Ideas
+
 **Endpoint:** `GET /report/ideas`
 
 ### Get Report Details by Idea
+
 **Endpoint:** `GET /report/ideas/{id}`
 
 ### Get Reported Users
+
 **Endpoint:** `GET /report/user`
 
 ### Get Reports for a Specific User
+
 **Endpoint:** `GET /report/user/{id}`
 
 ---
@@ -362,12 +381,15 @@
 ## Idea Comment Permissions
 
 ### Remove Comment/Idea Permissions
+
 **Endpoint:** `PUT /remove-idea-permissions/{id}`
 
 ### Give Comment/Idea Permissions
+
 **Endpoint:** `PUT /give-idea-permissions/{id}`
 
 ### Get All Banned Users
+
 **Endpoint:** `GET /banUser`
 
 ---
@@ -375,17 +397,19 @@
 ## Reports & Statistics
 
 ### Get Active Users
+
 **Endpoint:** `GET /active-users`
 
 ### Get Department Report
+
 **Endpoint:** `GET /department-report`
 
 ### Get Anonymous Ideas
+
 **Endpoint:** `GET /anonymous-ideas`
 
 ### Get Anonymous Comments
+
 **Endpoint:** `GET /anonymous-comments`
 
-
 This documentation provides an overview of all API endpoints and expected parameters. For more details, refer to the Postman collection.
-

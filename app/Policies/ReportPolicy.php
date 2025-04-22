@@ -33,7 +33,7 @@ class ReportPolicy
 
     public function checkRole(User $user): bool
     {
-        return $user->roles>contains('role', "QA Manager");
+        return $user->roles->contains('role', "QA Manager");
     }
 
     /**
