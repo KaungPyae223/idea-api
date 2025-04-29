@@ -320,7 +320,7 @@ class IdeaController extends Controller
 
         if($idea->is_enabled){
 
-            // Mail::to($idea->user->email)->send(new ApproveMail($idea));
+            Mail::to($idea->user->email)->send(new ApproveMail($idea));
 
         }
 
