@@ -22,7 +22,7 @@ class LogPolicy
      */
     public function view(User $user, $id): bool
     {
-        return $user->id === $id;
+        return $user->permissions->contains('permission', "View User Logs");
     }
 
     /**
