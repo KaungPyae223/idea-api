@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\VoteResource;
 use App\Http\Requests\StoreVoteRequest;
 use App\Http\Requests\UpdateVoteRequest;
-use App\Http\Resources\IdeaResource;
-use App\Models\Idea;
 use App\Models\Vote;
 use App\Repositories\VoteRepository;
 use Illuminate\Support\Facades\Validator;
@@ -56,11 +54,9 @@ class VoteController extends Controller
              $this->voteRepository->destroy($already_vote->id);
         }
 
-        $idea = Idea::find($request->idea_id);
+       
 
-        return response()->json(['message' => 'Successfully Voted', 'idea' => new IdeaResource($idea)], 201);
-
-        // return response()->json(['message' => 'Successfully Voted', 'vote' => new VoteResource($vote)], 201);
+        return response()->json(['message' => 'Successfully Voted', 'vote' => new VoteResource($vote)], 201);
 
     }
 
