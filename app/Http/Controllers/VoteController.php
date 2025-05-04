@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Resources\VoteResource;
 use App\Http\Requests\StoreVoteRequest;
 use App\Http\Requests\UpdateVoteRequest;
+use App\Http\Resources\IdeaResource;
+use App\Models\Idea;
 use App\Models\Vote;
 use App\Repositories\VoteRepository;
 use Illuminate\Support\Facades\Validator;
@@ -45,14 +47,21 @@ class VoteController extends Controller
 
         $already_vote  = Vote::query()->where("idea_id",$request->idea_id)->where("user_id",$request->user()->id)->first();
 
-
-        if($already_vote){
-            $vote = $this->voteRepository->update($already_vote->id, [...$request->all(),"user_id" => $request->user()->id]);
+        if(!$already_vote){
+            $this->voteRepository->create([...$request->all(),"user_id" => 1]);
+        }
+        elseif($already_vote->vote_value != $request->vote_value){
+             $this->voteRepository->update($already_vote->id, [...$request->all(),"user_id" => $request->user()->id]);
         }else{
-            $vote = $this->voteRepository->create([...$request->all(),"user_id" => 1]);
+             $this->voteRepository->destroy($already_vote->id);
         }
 
-        return response()->json(['message' => 'Successfully Voted', 'vote' => new VoteResource($vote)], 201);
+        $idea = Idea::find($request->idea_id);
+
+        return response()->json(['message' => 'Successfully Voted', 'idea' => new IdeaResource($idea)], 201);
+
+        // return response()->json(['message' => 'Successfully Voted', 'vote' => new VoteResource($vote)], 201);
+
     }
 
     /**
